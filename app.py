@@ -191,31 +191,27 @@ def chat():
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            system_instruction=SYSTEM_PROMPT
-        )
 
-        # Convert history (everything except last message) to Gemini format
-        history = []
+        # Build conversation: inject system prompt as first user/model exchange
+        history = [
+            {"role": "user", "parts": ["Please act as a Berkeley tenant rights advisor with this background: " + SYSTEM_PROMPT]},
+            {"role": "model", "parts": ["Understood. I am a Berkeley tenant rights advisor. I will help users understand their rights under the Berkeley Rent Stabilization Ordinance and related laws. How can I help you today?"]},
+        ]
+
+        # Add conversation history
         for msg in messages[:-1]:
             history.append({
                 "role": "user" if msg["role"] == "user" else "model",
                 "parts": [msg["content"]]
             })
 
+        model = genai.GenerativeModel(model_name="gemini-pro")
         chat_session = model.start_chat(history=history)
         response = chat_session.send_message(messages[-1]["content"])
         return jsonify({"reply": response.text})
 
     except Exception as e:
-        err = str(e).lower()
-        full_err = str(e)
-        if "api_key" in err or "invalid" in err or "permission" in err or "credential" in err:
-            return jsonify({"error": f"API key error: {full_err}"}), 401
-        if "quota" in err or "rate" in err or "limit" in err or "429" in err or "resource" in err:
-            return jsonify({"error": f"Quota/rate error: {full_err}"}), 429
-        return jsonify({"error": f"Server error: {full_err}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
