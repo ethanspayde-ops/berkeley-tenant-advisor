@@ -192,7 +192,7 @@ def chat():
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(
-            model_name="gemini-2.0-flash",
+            model_name="gemini-1.5-flash",
             system_instruction=SYSTEM_PROMPT
         )
 
@@ -210,11 +210,12 @@ def chat():
 
     except Exception as e:
         err = str(e).lower()
+        full_err = str(e)
         if "api_key" in err or "invalid" in err or "permission" in err or "credential" in err:
-            return jsonify({"error": "Invalid API key on server."}), 401
-        if "quota" in err or "rate" in err or "limit" in err:
-            return jsonify({"error": "Rate limit reached. Please try again shortly."}), 429
-        return jsonify({"error": f"Server error: {str(e)}"}), 500
+            return jsonify({"error": f"API key error: {full_err}"}), 401
+        if "quota" in err or "rate" in err or "limit" in err or "429" in err or "resource" in err:
+            return jsonify({"error": f"Quota/rate error: {full_err}"}), 429
+        return jsonify({"error": f"Server error: {full_err}"}), 500
 
 
 if __name__ == "__main__":
