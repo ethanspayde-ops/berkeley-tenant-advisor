@@ -173,7 +173,7 @@ def index():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
         return jsonify({"error": "Server API key not configured."}), 500
 
@@ -185,32 +185,38 @@ def chat():
     if not isinstance(messages, list) or len(messages) == 0:
         return jsonify({"error": "messages must be a non-empty list."}), 400
 
-    # Build prompt with full conversation history
-    conversation = "System: " + SYSTEM_PROMPT + "\n\n"
+    # Build messages for Groq — uses standard OpenAI-compatible format
+    groq_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     for msg in messages:
-        role = "User" if msg["role"] == "user" else "Assistant"
-        conversation += role + ": " + msg["content"] + "\n\n"
-    conversation += "Assistant:"
-
-    # Call Gemini REST API directly - no SDK needed
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-    payload = {
-        "contents": [{"parts": [{"text": conversation}]}],
-        "generationConfig": {"maxOutputTokens": 1024, "temperature": 0.7}
-    }
+        role = "user" if msg["role"] == "user" else "assistant"
+        groq_messages.append({"role": role, "content": msg["content"]})
 
     try:
-        resp = http_requests.post(url, json=payload, timeout=30)
+        resp = http_requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "llama3-8b-8192",
+                "messages": groq_messages,
+                "max_tokens": 1024,
+                "temperature": 0.7
+            },
+            timeout=30
+        )
+
         result = resp.json()
 
         if resp.status_code == 429:
-            return jsonify({"error": "Rate limit reached. Please wait a moment and try again."}), 429
-        if resp.status_code == 400:
-            return jsonify({"error": "Bad request: " + str(result)}), 400
+            return jsonify({"error": "Rate limit reached. Please try again in a moment."}), 429
+        if resp.status_code == 401:
+            return jsonify({"error": "Invalid API key."}), 401
         if resp.status_code != 200:
             return jsonify({"error": f"API error {resp.status_code}: {str(result)}"}), 500
 
-        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        reply = result["choices"][0]["message"]["content"]
         return jsonify({"reply": reply.strip()})
 
     except Exception as e:
