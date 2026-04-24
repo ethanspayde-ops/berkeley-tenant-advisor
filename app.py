@@ -84,6 +84,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
 .sb:hover{background:#e8f0ea;border-color:#b8d4be;color:#1d4a2e}
 @media(max-width:580px){#sidebar{display:none}#sugs{grid-template-columns:1fr}}
 </style>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "248fe58ac1d24270ad07335ee26c8979"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
 <div id="header">
