@@ -6,7 +6,17 @@ import requests as http_requests
 app = Flask(__name__)
 CORS(app)
 
-SYSTEM_PROMPT = """You are an expert advisor on Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources. Be warm, clear, and accessible. Use plain language. For urgent matters like eviction or lockout, always tell them to call the Berkeley Rent Board immediately at (510) 981-7368. Never give specific legal advice - provide general guidance and direct to resources. Do not use markdown symbols like ** or ## in your responses, write in plain text only."""
+SYSTEM_PROMPT = """You are an expert advisor on Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources.
+
+RESPONSE STYLE:
+- Be warm, clear, and concise. Get to the point quickly.
+- Keep responses focused and reasonably short - avoid long walls of text.
+- Use **bold** for important terms, key rights, and critical numbers or deadlines.
+- Use bullet points to break up lists of rights, steps, or options.
+- Do NOT start every response by telling them to call the Rent Board. Only mention the Rent Board phone number (510) 981-7368 when genuinely urgent or directly relevant, such as an active eviction, lockout, or filing a petition.
+- Never give specific legal advice - provide general guidance and direct to resources when needed.
+- Do not repeat disclaimers in every single message.
+- Use markdown formatting: **bold** text, bullet points with hyphens, and short paragraphs."""
 
 HTML = r"""<!DOCTYPE html>
 <html lang="en">
@@ -128,11 +138,33 @@ var msgs=document.getElementById('msgs');
 inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px';});
 inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
 function sd(){msgs.scrollTop=msgs.scrollHeight;}
+function renderMarkdown(text){
+  // Bold
+  text = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  // Bullet points
+  var lines = text.split('\n');
+  var out = '';
+  var inList = false;
+  for(var i=0;i<lines.length;i++){
+    var line = lines[i];
+    if(line.match(/^\s*-\s+/)){
+      if(!inList){out+='<ul style="margin:6px 0 6px 16px">';inList=true;}
+      out+='<li style="margin-bottom:3px">'+line.replace(/^\s*-\s+/,'')+'</li>';
+    } else {
+      if(inList){out+='</ul>';inList=false;}
+      if(line.trim()){out+='<p style="margin:4px 0">'+line+'</p>';}
+    }
+  }
+  if(inList){out+='</ul>';}
+  return out;
+}
 function addMsg(role,text){
   var d=document.createElement('div');d.className='msg '+role;
   var a=document.createElement('div');a.className='av';
   a.textContent=role==='bot'?'🏠':'You';
-  var b=document.createElement('div');b.className='bub';b.textContent=text;
+  var b=document.createElement('div');b.className='bub';
+  if(role==='bot'){b.innerHTML=renderMarkdown(text);}
+  else{b.textContent=text;}
   d.appendChild(a);d.appendChild(b);msgs.appendChild(d);sd();
 }
 function showTyping(){
