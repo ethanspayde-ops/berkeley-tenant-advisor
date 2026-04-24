@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
-import google.generativeai as genai
 import os
+import requests as http_requests
 
 app = Flask(__name__)
 CORS(app)
@@ -185,30 +185,33 @@ def chat():
     if not isinstance(messages, list) or len(messages) == 0:
         return jsonify({"error": "messages must be a non-empty list."}), 400
 
+    # Build prompt with full conversation history
+    conversation = "System: " + SYSTEM_PROMPT + "\n\n"
     for msg in messages:
-        if msg.get("role") not in ("user", "assistant") or not msg.get("content"):
-            return jsonify({"error": "Invalid message format."}), 400
+        role = "User" if msg["role"] == "user" else "Assistant"
+        conversation += role + ": " + msg["content"] + "\n\n"
+    conversation += "Assistant:"
+
+    # Call Gemini REST API directly - no SDK needed
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+    payload = {
+        "contents": [{"parts": [{"text": conversation}]}],
+        "generationConfig": {"maxOutputTokens": 1024, "temperature": 0.7}
+    }
 
     try:
-        genai.configure(api_key=api_key)
+        resp = http_requests.post(url, json=payload, timeout=30)
+        result = resp.json()
 
-        # Build conversation: inject system prompt as first user/model exchange
-        history = [
-            {"role": "user", "parts": ["Please act as a Berkeley tenant rights advisor with this background: " + SYSTEM_PROMPT]},
-            {"role": "model", "parts": ["Understood. I am a Berkeley tenant rights advisor. I will help users understand their rights under the Berkeley Rent Stabilization Ordinance and related laws. How can I help you today?"]},
-        ]
+        if resp.status_code == 429:
+            return jsonify({"error": "Rate limit reached. Please wait a moment and try again."}), 429
+        if resp.status_code == 400:
+            return jsonify({"error": "Bad request: " + str(result)}), 400
+        if resp.status_code != 200:
+            return jsonify({"error": f"API error {resp.status_code}: {str(result)}"}), 500
 
-        # Add conversation history
-        for msg in messages[:-1]:
-            history.append({
-                "role": "user" if msg["role"] == "user" else "model",
-                "parts": [msg["content"]]
-            })
-
-        model = genai.GenerativeModel(model_name="gemini-pro")
-        chat_session = model.start_chat(history=history)
-        response = chat_session.send_message(messages[-1]["content"])
-        return jsonify({"reply": response.text})
+        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        return jsonify({"reply": reply.strip()})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
