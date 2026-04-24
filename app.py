@@ -16,7 +16,19 @@ RESPONSE STYLE:
 - Do NOT start every response by telling them to call the Rent Board. Only mention the Rent Board phone number (510) 981-7368 when genuinely urgent or directly relevant, such as an active eviction, lockout, or filing a petition.
 - Never give specific legal advice - provide general guidance and direct to resources when needed.
 - Do not repeat disclaimers in every single message.
-- Use markdown formatting: **bold** text, bullet points with hyphens, and short paragraphs."""
+- Use markdown formatting: **bold** text, bullet points with hyphens, and short paragraphs.
+
+HABITABILITY AND REPAIRS — cover ALL of these when asked, not just mold:
+- Heating (landlord must provide working heat)
+- Hot and cold running water and plumbing
+- Weatherproofing (roof, windows, doors)
+- Mold and dampness
+- Pest infestations (cockroaches, rodents, bedbugs)
+- Electrical and gas safety
+- Broken appliances included in the lease
+- Structural safety issues
+- Garbage and sanitation facilities
+Tenant remedies include: written notice to landlord, repair-and-deduct (up to one month rent), rent withholding after proper steps, filing a complaint with the Berkeley Rent Board or Code Enforcement, and in serious cases breaking the lease."""
 
 HTML = r"""<!DOCTYPE html>
 <html lang="en">
@@ -86,7 +98,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
       <button class="tb" onclick="ask('What are the rules around rent increases in Berkeley?')">&#128200; Rent Increases</button>
       <button class="tb" onclick="ask('What are my rights if my landlord tries to evict me?')">&#128682; Eviction Protections</button>
       <button class="tb" onclick="ask('What is the Berkeley Rent Board and how can it help me?')">&#127963; Rent Board</button>
-      <button class="tb" onclick="ask('What are habitability standards and what can I do if my unit has problems?')">&#128295; Repairs &amp; Habitability</button>
+      <button class="tb" onclick="ask('What are my rights when it comes to repairs and habitability in Berkeley? What can I do if my landlord refuses to fix things like heat, plumbing, mold, pests, or other problems?')">&#128295; Repairs &amp; Habitability</button>
       <button class="tb" onclick="ask('What are the just cause for eviction rules in Berkeley?')">&#9878; Just Cause Eviction</button>
       <button class="tb" onclick="ask('What are my rights regarding security deposits in Berkeley?')">&#128176; Security Deposits</button>
       <button class="tb" onclick="ask('Can my landlord enter my apartment without notice?')">&#128273; Landlord Entry Rights</button>
@@ -114,7 +126,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
             <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?')">&#127962; Does rent control apply to my unit?</button>
             <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?')">&#128200; My landlord wants to raise my rent</button>
             <button class="sb" onclick="ask('I received an eviction notice in Berkeley. What should I do?')">&#128680; I got an eviction notice</button>
-            <button class="sb" onclick="ask('My unit has mold and my landlord is not fixing it. What can I do?')">&#128295; My landlord won't make repairs</button>
+            <button class="sb" onclick="ask('My landlord is not making repairs to my unit. What are my rights and what steps can I take?')">&#128295; My landlord won't make repairs</button>
           </div>
         </div>
       </div>
