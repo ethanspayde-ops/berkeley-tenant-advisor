@@ -8,7 +8,7 @@ CORS(app)
 
 SYSTEM_PROMPT = """You are an expert advisor on Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources. Be warm, clear, and accessible. Use plain language. For urgent matters like eviction or lockout, always tell them to call the Berkeley Rent Board immediately at (510) 981-7368. Never give specific legal advice - provide general guidance and direct to resources. Do not use markdown symbols like ** or ## in your responses, write in plain text only."""
 
-HTML = """<!DOCTYPE html>
+HTML = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -131,13 +131,13 @@ function sd(){msgs.scrollTop=msgs.scrollHeight;}
 function addMsg(role,text){
   var d=document.createElement('div');d.className='msg '+role;
   var a=document.createElement('div');a.className='av';
-  a.textContent=role==='bot'?'\u{1F3E0}':'You';
+  a.textContent=role==='bot'?'🏠':'You';
   var b=document.createElement('div');b.className='bub';b.textContent=text;
   d.appendChild(a);d.appendChild(b);msgs.appendChild(d);sd();
 }
 function showTyping(){
   var d=document.createElement('div');d.className='msg bot';d.id='typ';
-  var a=document.createElement('div');a.className='av';a.textContent='\u{1F3E0}';
+  var a=document.createElement('div');a.className='av';a.textContent='🏠';
   var t=document.createElement('div');t.className='typing';
   t.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
   d.appendChild(a);d.appendChild(t);msgs.appendChild(d);sd();
