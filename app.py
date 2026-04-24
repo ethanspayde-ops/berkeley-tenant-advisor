@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 import os
 
 app = Flask(__name__)
@@ -100,12 +99,12 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
         <div class="av">&#127968;</div>
         <div id="welcome">
           <h3>Welcome, Berkeley Tenant!</h3>
-          <p>I can help you understand your rights under Berkeley's Rent Stabilization Ordinance. No account or API key needed — just ask below.</p>
+          <p>I can help you understand your rights under Berkeley's Rent Stabilization Ordinance. No account or API key needed - just ask below.</p>
           <div id="sugs">
             <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?')">&#127962; Does rent control apply to my unit?</button>
             <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?')">&#128200; My landlord wants to raise my rent</button>
             <button class="sb" onclick="ask('I received an eviction notice in Berkeley. What should I do?')">&#128680; I got an eviction notice</button>
-            <button class="sb" onclick="ask('My unit has mold and my landlord is not fixing it. What can I do?')">&#128295; My landlord won&#39;t make repairs</button>
+            <button class="sb" onclick="ask('My unit has mold and my landlord is not fixing it. What can I do?')">&#128295; My landlord won't make repairs</button>
           </div>
         </div>
       </div>
@@ -132,13 +131,13 @@ function sd(){msgs.scrollTop=msgs.scrollHeight;}
 function addMsg(role,text){
   var d=document.createElement('div');d.className='msg '+role;
   var a=document.createElement('div');a.className='av';
-  a.textContent=role==='bot'?'\U0001F3E0':'You';
+  a.textContent=role==='bot'?'\u{1F3E0}':'You';
   var b=document.createElement('div');b.className='bub';b.textContent=text;
   d.appendChild(a);d.appendChild(b);msgs.appendChild(d);sd();
 }
 function showTyping(){
   var d=document.createElement('div');d.className='msg bot';d.id='typ';
-  var a=document.createElement('div');a.className='av';a.textContent='\U0001F3E0';
+  var a=document.createElement('div');a.className='av';a.textContent='\u{1F3E0}';
   var t=document.createElement('div');t.className='typing';
   t.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
   d.appendChild(a);d.appendChild(t);msgs.appendChild(d);sd();
@@ -191,17 +190,22 @@ def chat():
             return jsonify({"error": "Invalid message format."}), 400
 
     try:
-        client = genai.Client(api_key=api_key)
-        contents = []
-        for msg in messages:
-            role = "user" if msg["role"] == "user" else "model"
-            contents.append(types.Content(role=role, parts=[types.Part(text=msg["content"])]))
-
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=contents,
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT)
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(
+            model_name="gemini-2.0-flash",
+            system_instruction=SYSTEM_PROMPT
         )
+
+        # Convert history (everything except last message) to Gemini format
+        history = []
+        for msg in messages[:-1]:
+            history.append({
+                "role": "user" if msg["role"] == "user" else "model",
+                "parts": [msg["content"]]
+            })
+
+        chat_session = model.start_chat(history=history)
+        response = chat_session.send_message(messages[-1]["content"])
         return jsonify({"reply": response.text})
 
     except Exception as e:
