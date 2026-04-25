@@ -52,7 +52,7 @@ html{height:100%}
 #reset-btn{font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #reset-btn:hover{background:rgba(255,255,255,0.2)}
 
-#wrap{display:flex;flex:1;overflow:hidden;height:calc(100vh - 63px)}
+#wrap{display:flex;flex:1;overflow:hidden;height:calc(100dvh - 63px)}
 #sidebar{width:220px;background:#fff;border-right:1px solid #d8d3c5;padding:12px;overflow-y:auto;flex-shrink:0}
 #sidebar h3{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#888;margin:0 0 8px 0}
 .sec{margin-bottom:14px}
@@ -126,7 +126,10 @@ html{height:100%}
 @media(max-width:580px){
   #sidebar{display:none}
   #sugs{grid-template-columns:1fr 1fr}
-  #wrap{height:calc(100vh - 63px)}
+  #wrap{height:calc(100dvh - 63px)}
+  #chat-header{display:none}
+  #msgs{padding:10px}
+  .bub{font-size:13px}
 }
 @media(max-width:380px){
   #sugs{grid-template-columns:1fr}
@@ -207,7 +210,7 @@ html{height:100%}
     </div>
     <div id="input-bar">
       <div id="input-row">
-        <textarea id="inp" placeholder="Ask about your tenant rights in Berkeley..." rows="1"></textarea>
+        <textarea id="inp" placeholder="Type your question here..." rows="1"></textarea>
         <button id="sendbtn" onclick="sendMsg()">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg>
         </button>
@@ -225,15 +228,23 @@ var msgs=document.getElementById('msgs');
 
 function startChat(){
   document.getElementById('landing').style.display='none';
+  setTimeout(function(){
+    inp.focus();
+    inp.scrollIntoView({behavior:'smooth',block:'end'});
+    // Flash the input bar to draw attention on mobile
+    var row = document.getElementById('input-row');
+    row.style.transition='border-color .3s';
+    row.style.borderColor='#FDB515';
+    setTimeout(function(){row.style.borderColor='';},1200);
+  }, 200);
 }
 
 function startWithQuestion(question){
   document.getElementById('landing').style.display='none';
-  // Small delay to let the chat render before sending
   setTimeout(function(){
     inp.value=question;
     sendMsg();
-  }, 100);
+  }, 150);
 }
 
 function showToast(msg){
