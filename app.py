@@ -107,19 +107,33 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 
 /* Landing page - no scroll, fits screen */
 #landing{position:fixed;inset:0;background:#003262;z-index:999;display:flex;flex-direction:column;overflow:hidden}
-#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:16px 20px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom));overflow:hidden}
-#landing h1{color:#FDB515;font-size:22px;font-weight:bold;text-align:center;line-height:1.2;margin:0}
-#landing .subtitle{color:rgba(255,255,255,0.85);font-size:13px;text-align:center;max-width:480px;line-height:1.5;margin:0}
-#landing .features{display:flex;flex-direction:column;gap:8px;max-width:480px;width:100%;margin:0}
-#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:10px 12px;color:white;font-size:12px;line-height:1.4;cursor:pointer;transition:all .15s;position:relative;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
-#landing .feat:hover,#landing .feat:active{background:rgba(255,255,255,0.14);transform:translateX(2px)}
+#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 20px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));overflow:hidden;max-width:560px;margin:0 auto;width:100%}
+#landing h1{color:#FDB515;font-size:26px;font-weight:bold;text-align:center;line-height:1.2;margin:0}
+#landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;text-align:center;max-width:460px;line-height:1.6;margin:0}
+#landing .features{display:flex;flex-direction:column;gap:8px;width:100%;margin:0}
+#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:12px 14px;color:white;font-size:13px;line-height:1.4;cursor:pointer;transition:all .15s;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+#landing .feat:hover,#landing .feat:active{background:rgba(255,255,255,0.13);transform:translateX(3px)}
 #landing .feat-text{flex:1}
-#landing .feat strong{color:#FDB515;display:block;margin-bottom:2px;font-size:12px}
-#landing .feat-arrow{color:#FDB515;font-size:14px;opacity:0.8;flex-shrink:0}
-#landing .tap-hint{color:rgba(255,255,255,0.6);font-size:12px;text-align:center;margin:0}
-#start-btn{background:#FDB515;color:#003262;font-size:15px;font-weight:bold;padding:13px 24px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:340px}
+#landing .feat strong{color:#FDB515;display:block;margin-bottom:2px;font-size:13px}
+#landing .feat-arrow{color:#FDB515;font-size:15px;opacity:0.8;flex-shrink:0}
+#landing .tap-hint{color:rgba(255,255,255,0.55);font-size:12px;text-align:center;margin:0}
+#start-btn{background:#FDB515;color:#003262;font-size:15px;font-weight:bold;padding:14px 28px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:380px}
 #start-btn:hover,#start-btn:active{background:#ffc93c}
-#landing .disclaimer{color:rgba(255,255,255,0.4);font-size:10px;text-align:center;max-width:340px;line-height:1.4;margin:0}
+#landing .disclaimer{color:rgba(255,255,255,0.38);font-size:10.5px;text-align:center;max-width:380px;line-height:1.5;margin:0}
+@media(min-width:581px){
+  #landing h1{font-size:30px}
+  #landing .subtitle{font-size:15px}
+  #landing .feat{font-size:14px;padding:13px 16px}
+  #landing .feat strong{font-size:14px}
+  #landing-inner{gap:22px}
+}
+@media(max-height:680px){
+  #landing-inner{gap:12px}
+  #landing h1{font-size:20px}
+  #landing .subtitle{font-size:12px}
+  #landing .feat{padding:9px 12px;font-size:12px}
+  #landing .feat strong{font-size:12px}
+}
 
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
