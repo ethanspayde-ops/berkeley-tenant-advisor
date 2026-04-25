@@ -107,7 +107,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 
 /* Landing page - no scroll, fits screen */
 #landing{position:fixed;inset:0;background:#003262;z-index:999;display:flex;flex-direction:column;overflow:hidden}
-#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:14px;padding:20px 20px;padding-top:max(20px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom));overflow:hidden;max-width:560px;margin:0 auto;width:100%}
+#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 20px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));overflow:hidden;max-width:560px;margin:0 auto;width:100%}
 #landing h1{color:#FDB515;font-size:26px;font-weight:bold;text-align:center;line-height:1.2;margin:0}
 #landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;text-align:center;max-width:460px;line-height:1.6;margin:0}
 #landing .features{display:flex;flex-direction:column;gap:8px;width:100%;margin:0}
