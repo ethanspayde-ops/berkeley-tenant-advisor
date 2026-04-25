@@ -314,6 +314,12 @@ function addMsg(role,text){
   else{b.textContent=text;}
   d.appendChild(a);d.appendChild(b);
   wrapper.appendChild(d);
+  // For bot messages scroll to show top of message, not bottom
+  if(role==='bot'){
+    msgs.appendChild(wrapper);
+    wrapper.scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
 
   // Add feedback + share buttons for bot messages
   if(role==='bot'){
