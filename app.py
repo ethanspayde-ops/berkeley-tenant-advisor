@@ -41,17 +41,18 @@ HTML = r"""<!DOCTYPE html>
 <!-- End Cloudflare Web Analytics -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100%;min-height:100vh;display:flex;flex-direction:column}
+html{height:100%}
 
 /* Berkeley colors: navy #003262, gold #FDB515 */
-#header{background:#003262;color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:3px solid #FDB515}
-#header h1{font-size:17px;font-weight:bold;display:flex;align-items:center;gap:8px}
-#header-right{display:flex;align-items:center;gap:10px}
-#header span.badge{font-size:12px;background:rgba(253,181,21,0.2);border:1px solid #FDB515;color:#FDB515;padding:3px 10px;border-radius:20px}
-#reset-btn{font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:white;padding:4px 10px;border-radius:6px;cursor:pointer}
+#header{background:#003262;color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:3px solid #FDB515;min-height:60px}
+#header h1{font-size:15px;font-weight:bold;display:flex;align-items:center;gap:6px;flex:1;margin-right:10px;line-height:1.3}
+#header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#header span.badge{font-size:11px;background:rgba(253,181,21,0.2);border:1px solid #FDB515;color:#FDB515;padding:4px 10px;border-radius:20px;white-space:nowrap}
+#reset-btn{font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #reset-btn:hover{background:rgba(255,255,255,0.2)}
 
-#wrap{display:flex;flex:1;overflow:hidden}
+#wrap{display:flex;flex:1;overflow:hidden;height:calc(100vh - 63px)}
 #sidebar{width:220px;background:#fff;border-right:1px solid #d8d3c5;padding:12px;overflow-y:auto;flex-shrink:0}
 #sidebar h3{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#888;margin:0 0 8px 0}
 .sec{margin-bottom:14px}
@@ -64,7 +65,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
 #chat-header h2{font-size:15px;margin-bottom:2px;color:#003262}
 #chat-header p{font-size:12px;color:#888}
 
-#msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:11px}
+#msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}
 .msg{display:flex;gap:8px}
 .msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:78%}
 .msg.bot{align-self:flex-start;max-width:84%}
@@ -75,9 +76,8 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
 .msg.bot .bub{background:#fff;border:1px solid #d8d3c5;border-top-left-radius:3px}
 .msg.user .bub{background:#003262;color:white;border-top-right-radius:3px}
 
-/* Feedback + share row under bot messages */
-.msg-actions{display:flex;gap:6px;margin-top:4px;margin-left:36px}
-.act-btn{font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid #d8d3c5;background:#fff;cursor:pointer;color:#666}
+.msg-actions{display:flex;gap:6px;margin-top:4px;margin-left:36px;flex-wrap:wrap}
+.act-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid #d8d3c5;background:#fff;cursor:pointer;color:#666}
 .act-btn:hover{background:#f0f0f0}
 .act-btn.liked{background:#e8f5e9;border-color:#4caf50;color:#2e7d32}
 .act-btn.disliked{background:#ffeaea;border-color:#f44336;color:#c62828}
@@ -88,12 +88,12 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
 .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
 @keyframes boun{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
 
-#input-bar{padding:11px 16px;background:#fff;border-top:1px solid #d8d3c5;flex-shrink:0}
+#input-bar{padding:10px 14px;background:#fff;border-top:1px solid #d8d3c5;flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 #input-row{display:flex;gap:8px;align-items:flex-end;background:#f4f1ea;border:2px solid #d8d3c5;border-radius:11px;padding:8px 11px}
 #input-row:focus-within{border-color:#003262}
-#inp{flex:1;background:transparent;border:none;outline:none;font-family:Arial,sans-serif;font-size:14px;color:#1a1814;resize:none;line-height:1.5;min-height:20px;max-height:90px}
+#inp{flex:1;background:transparent;border:none;outline:none;font-family:Arial,sans-serif;font-size:16px;color:#1a1814;resize:none;line-height:1.5;min-height:22px;max-height:90px;-webkit-appearance:none}
 #inp::placeholder{color:#aaa}
-#sendbtn{width:32px;height:32px;background:#003262;border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+#sendbtn{width:34px;height:34px;background:#003262;border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
 #sendbtn:hover{background:#002244}
 #sendbtn:disabled{background:#bbb;cursor:not-allowed}
 #hint{font-size:11px;color:#aaa;margin-top:4px;text-align:center}
@@ -105,38 +105,48 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100vh;
 .sb{text-align:left;padding:8px 9px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:7px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .sb:hover{background:#e8eef5;border-color:#003262;color:#003262}
 
-/* Landing page */
-#landing{position:fixed;inset:0;background:#003262;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:24px}
-#landing h1{color:#FDB515;font-size:28px;font-weight:bold;margin-bottom:8px;text-align:center}
-#landing .subtitle{color:rgba(255,255,255,0.8);font-size:15px;margin-bottom:32px;text-align:center;max-width:480px;line-height:1.6}
-#landing .features{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;width:100%;margin-bottom:32px}
-#landing .feat{background:rgba(255,255,255,0.08);border:1px solid rgba(253,181,21,0.3);border-radius:10px;padding:14px;color:white;font-size:13px;line-height:1.5}
-#landing .feat strong{color:#FDB515;display:block;margin-bottom:4px;font-size:13px}
-#start-btn{background:#FDB515;color:#003262;font-size:16px;font-weight:bold;padding:14px 40px;border:none;border-radius:10px;cursor:pointer;transition:all .15s}
-#start-btn:hover{background:#ffc93c;transform:scale(1.03)}
-#landing .disclaimer{color:rgba(255,255,255,0.45);font-size:11px;margin-top:16px;text-align:center;max-width:400px}
+/* Landing page - scrollable on mobile */
+#landing{position:fixed;inset:0;background:#003262;overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:999;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0}
+#landing-inner{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px 40px}
+#landing h1{color:#FDB515;font-size:26px;font-weight:bold;margin-bottom:10px;text-align:center;line-height:1.2}
+#landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;margin-bottom:28px;text-align:center;max-width:480px;line-height:1.7}
+#landing .features{display:flex;flex-direction:column;gap:10px;max-width:480px;width:100%;margin-bottom:28px}
+#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:12px 14px;color:white;font-size:13px;line-height:1.5;cursor:default}
+#landing .feat strong{color:#FDB515;display:block;margin-bottom:3px;font-size:13px}
+#start-btn{background:#FDB515;color:#003262;font-size:16px;font-weight:bold;padding:15px 44px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:320px}
+#start-btn:hover{background:#ffc93c}
+#landing .disclaimer{color:rgba(255,255,255,0.4);font-size:11px;margin-top:16px;text-align:center;max-width:380px;line-height:1.5}
 
-/* Toast notification */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
 
-@media(max-width:580px){#sidebar{display:none}#sugs{grid-template-columns:1fr}#landing .features{grid-template-columns:1fr}}
+@media(max-width:580px){
+  #sidebar{display:none}
+  #sugs{grid-template-columns:1fr 1fr}
+  #wrap{height:calc(100vh - 63px)}
+}
+@media(max-width:380px){
+  #sugs{grid-template-columns:1fr}
+  #header h1{font-size:13px}
+}
 </style>
 </head>
 <body>
 
 <!-- Landing Page -->
 <div id="landing">
-  <h1>&#127968; Berkeley Tenant Rights Advisor</h1>
-  <p class="subtitle">Free AI-powered legal information for Berkeley tenants. Understand your rights under the Rent Stabilization Ordinance — instantly.</p>
-  <div class="features">
-    <div class="feat"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div>
-    <div class="feat"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div>
-    <div class="feat"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div>
-    <div class="feat"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div>
+  <div id="landing-inner">
+    <h1>&#127968; Berkeley Tenant Rights Advisor</h1>
+    <p class="subtitle">Free AI-powered legal information for Berkeley tenants. Understand your rights under the Rent Stabilization Ordinance — instantly.</p>
+    <div class="features">
+      <div class="feat"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div>
+      <div class="feat"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div>
+      <div class="feat"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div>
+      <div class="feat"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div>
+    </div>
+    <button id="start-btn" onclick="startChat()">Get Started &rarr;</button>
+    <p class="disclaimer">General legal information only — not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
   </div>
-  <button id="start-btn" onclick="startChat()">Get Started &rarr;</button>
-  <p class="disclaimer">General legal information only — not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
 </div>
 
 <div id="toast"></div>
@@ -272,28 +282,28 @@ function addMsg(role,text){
     actions.className='msg-actions';
 
     var likeBtn=document.createElement('button');
-    likeBtn.className='act-btn';likeBtn.textContent='&#128077; Helpful';
+    likeBtn.className='act-btn';likeBtn.textContent='👍 Helpful';
     likeBtn.onclick=function(){
-      likeBtn.classList.add('liked');likeBtn.textContent='&#128077; Thanks!';
+      likeBtn.classList.add('liked');likeBtn.textContent='👍 Thanks!';
       dislikeBtn.disabled=true;
       showToast('Thanks for your feedback!');
     };
 
     var dislikeBtn=document.createElement('button');
-    dislikeBtn.className='act-btn';dislikeBtn.textContent='&#128078; Not helpful';
+    dislikeBtn.className='act-btn';dislikeBtn.textContent='👎 Not helpful';
     dislikeBtn.onclick=function(){
-      dislikeBtn.classList.add('disliked');dislikeBtn.textContent='&#128078; Noted';
+      dislikeBtn.classList.add('disliked');dislikeBtn.textContent='👎 Noted';
       likeBtn.disabled=true;
       showToast('Thanks - we\'ll keep improving!');
     };
 
     var shareBtn=document.createElement('button');
-    shareBtn.className='act-btn';shareBtn.textContent='&#128279; Copy';
+    shareBtn.className='act-btn';shareBtn.textContent='🔗 Copy';
     shareBtn.onclick=function(){
       navigator.clipboard.writeText(text).then(function(){
-        shareBtn.classList.add('copied');shareBtn.textContent='&#10003; Copied!';
+        shareBtn.classList.add('copied');shareBtn.textContent='✓ Copied!';
         showToast('Answer copied to clipboard!');
-        setTimeout(function(){shareBtn.classList.remove('copied');shareBtn.textContent='&#128279; Copy';},2000);
+        setTimeout(function(){shareBtn.classList.remove('copied');shareBtn.textContent='🔗 Copy';},2000);
       });
     };
 
