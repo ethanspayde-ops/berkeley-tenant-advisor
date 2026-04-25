@@ -41,8 +41,8 @@ HTML = r"""<!DOCTYPE html>
 <!-- End Cloudflare Web Analytics -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;height:100%;min-height:100vh;display:flex;flex-direction:column}
-html{height:100%}
+html,body{height:100%;overflow:hidden}
+body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;flex-direction:column;height:100dvh;max-height:100dvh}
 
 /* Berkeley colors: navy #003262, gold #FDB515 */
 #header{background:#003262;color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:3px solid #FDB515;min-height:60px}
@@ -52,7 +52,7 @@ html{height:100%}
 #reset-btn{font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #reset-btn:hover{background:rgba(255,255,255,0.2)}
 
-#wrap{display:flex;flex:1;overflow:hidden;height:calc(100dvh - 63px)}
+#wrap{display:flex;flex:1;overflow:hidden;min-height:0}
 #sidebar{width:220px;background:#fff;border-right:1px solid #d8d3c5;padding:12px;overflow-y:auto;flex-shrink:0}
 #sidebar h3{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#888;margin:0 0 8px 0}
 .sec{margin-bottom:14px}
@@ -105,20 +105,21 @@ html{height:100%}
 .sb{text-align:left;padding:8px 9px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:7px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .sb:hover{background:#e8eef5;border-color:#003262;color:#003262}
 
-/* Landing page - scrollable on mobile */
-#landing{position:fixed;inset:0;background:#003262;overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:999;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0}
-#landing-inner{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px 40px}
-#landing h1{color:#FDB515;font-size:26px;font-weight:bold;margin-bottom:10px;text-align:center;line-height:1.2}
-#landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;margin-bottom:28px;text-align:center;max-width:480px;line-height:1.7}
-#landing .features{display:flex;flex-direction:column;gap:10px;max-width:480px;width:100%;margin-bottom:28px}
-#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:12px 14px;color:white;font-size:13px;line-height:1.5;cursor:pointer;transition:all .15s;position:relative;display:flex;flex-direction:column}
-#landing .feat:hover,#landing .feat:active{background:rgba(255,255,255,0.14);border-left-color:#FDB515;transform:translateX(3px)}
-#landing .feat strong{color:#FDB515;display:block;margin-bottom:3px;font-size:13px}
-#landing .feat-arrow{color:#FDB515;font-size:16px;margin-top:6px;align-self:flex-end;opacity:0.7}
-#landing .tap-hint{color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:12px;text-align:center}
-#start-btn{background:#FDB515;color:#003262;font-size:16px;font-weight:bold;padding:15px 44px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:320px}
-#start-btn:hover{background:#ffc93c}
-#landing .disclaimer{color:rgba(255,255,255,0.4);font-size:11px;margin-top:16px;text-align:center;max-width:380px;line-height:1.5}
+/* Landing page - no scroll, fits screen */
+#landing{position:fixed;inset:0;background:#003262;z-index:999;display:flex;flex-direction:column;overflow:hidden}
+#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:16px 20px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom));overflow:hidden}
+#landing h1{color:#FDB515;font-size:22px;font-weight:bold;text-align:center;line-height:1.2;margin:0}
+#landing .subtitle{color:rgba(255,255,255,0.85);font-size:13px;text-align:center;max-width:480px;line-height:1.5;margin:0}
+#landing .features{display:flex;flex-direction:column;gap:8px;max-width:480px;width:100%;margin:0}
+#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:10px 12px;color:white;font-size:12px;line-height:1.4;cursor:pointer;transition:all .15s;position:relative;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
+#landing .feat:hover,#landing .feat:active{background:rgba(255,255,255,0.14);transform:translateX(2px)}
+#landing .feat-text{flex:1}
+#landing .feat strong{color:#FDB515;display:block;margin-bottom:2px;font-size:12px}
+#landing .feat-arrow{color:#FDB515;font-size:14px;opacity:0.8;flex-shrink:0}
+#landing .tap-hint{color:rgba(255,255,255,0.6);font-size:12px;text-align:center;margin:0}
+#start-btn{background:#FDB515;color:#003262;font-size:15px;font-weight:bold;padding:13px 24px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:340px}
+#start-btn:hover,#start-btn:active{background:#ffc93c}
+#landing .disclaimer{color:rgba(255,255,255,0.4);font-size:10px;text-align:center;max-width:340px;line-height:1.4;margin:0}
 
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
@@ -126,14 +127,14 @@ html{height:100%}
 @media(max-width:580px){
   #sidebar{display:none}
   #sugs{grid-template-columns:1fr 1fr}
-  #wrap{height:calc(100dvh - 63px)}
   #chat-header{display:none}
   #msgs{padding:10px}
   .bub{font-size:13px}
 }
 @media(max-width:380px){
   #sugs{grid-template-columns:1fr}
-  #header h1{font-size:13px}
+  #header h1{font-size:12px}
+  #reset-btn{font-size:10px;padding:4px 7px}
 }
 </style>
 </head>
@@ -143,16 +144,16 @@ html{height:100%}
 <div id="landing">
   <div id="landing-inner">
     <h1>&#127968; Berkeley Tenant Rights Advisor</h1>
-    <p class="subtitle">Free AI-powered legal information for Berkeley tenants. Understand your rights under the Rent Stabilization Ordinance — instantly.</p>
+    <p class="subtitle">Free AI-powered legal information for Berkeley tenants. Understand your rights under the Rent Stabilization Ordinance, instantly.</p>
     <p class="tap-hint">Tap a topic to get started:</p>
     <div class="features">
-      <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?')"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.<span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?')"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.<span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?')"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.<span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?')"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.<span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?')"><div class="feat-text"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?')"><div class="feat-text"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
     <button id="start-btn" onclick="startChat()">Ask Your Own Question &rarr;</button>
-    <p class="disclaimer">General legal information only — not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
+    <p class="disclaimer">General legal information only, not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
   </div>
 </div>
 
