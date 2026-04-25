@@ -111,8 +111,11 @@ html{height:100%}
 #landing h1{color:#FDB515;font-size:26px;font-weight:bold;margin-bottom:10px;text-align:center;line-height:1.2}
 #landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;margin-bottom:28px;text-align:center;max-width:480px;line-height:1.7}
 #landing .features{display:flex;flex-direction:column;gap:10px;max-width:480px;width:100%;margin-bottom:28px}
-#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:12px 14px;color:white;font-size:13px;line-height:1.5;cursor:default}
+#landing .feat{background:rgba(255,255,255,0.07);border-left:3px solid #FDB515;border-radius:8px;padding:12px 14px;color:white;font-size:13px;line-height:1.5;cursor:pointer;transition:all .15s;position:relative;display:flex;flex-direction:column}
+#landing .feat:hover,#landing .feat:active{background:rgba(255,255,255,0.14);border-left-color:#FDB515;transform:translateX(3px)}
 #landing .feat strong{color:#FDB515;display:block;margin-bottom:3px;font-size:13px}
+#landing .feat-arrow{color:#FDB515;font-size:16px;margin-top:6px;align-self:flex-end;opacity:0.7}
+#landing .tap-hint{color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:12px;text-align:center}
 #start-btn{background:#FDB515;color:#003262;font-size:16px;font-weight:bold;padding:15px 44px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:320px}
 #start-btn:hover{background:#ffc93c}
 #landing .disclaimer{color:rgba(255,255,255,0.4);font-size:11px;margin-top:16px;text-align:center;max-width:380px;line-height:1.5}
@@ -138,13 +141,14 @@ html{height:100%}
   <div id="landing-inner">
     <h1>&#127968; Berkeley Tenant Rights Advisor</h1>
     <p class="subtitle">Free AI-powered legal information for Berkeley tenants. Understand your rights under the Rent Stabilization Ordinance — instantly.</p>
+    <p class="tap-hint">Tap a topic to get started:</p>
     <div class="features">
-      <div class="feat"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div>
-      <div class="feat"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div>
-      <div class="feat"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div>
-      <div class="feat"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div>
+      <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?')"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.<span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?')"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.<span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?')"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.<span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?')"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.<span class="feat-arrow">&#8594;</span></div>
     </div>
-    <button id="start-btn" onclick="startChat()">Get Started &rarr;</button>
+    <button id="start-btn" onclick="startChat()">Ask Your Own Question &rarr;</button>
     <p class="disclaimer">General legal information only — not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
   </div>
 </div>
@@ -221,6 +225,15 @@ var msgs=document.getElementById('msgs');
 
 function startChat(){
   document.getElementById('landing').style.display='none';
+}
+
+function startWithQuestion(question){
+  document.getElementById('landing').style.display='none';
+  // Small delay to let the chat render before sending
+  setTimeout(function(){
+    inp.value=question;
+    sendMsg();
+  }, 100);
 }
 
 function showToast(msg){
