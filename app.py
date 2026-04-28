@@ -323,14 +323,7 @@ function addMsg(role,text){
   else{b.textContent=text;}
   d.appendChild(a);d.appendChild(b);
   wrapper.appendChild(d);
-  // For bot messages scroll to show top of message, not bottom
-  if(role==='bot'){
-    msgs.appendChild(wrapper);
-    wrapper.scrollIntoView({behavior:'smooth',block:'start'});
-    return;
-  }
 
-  // Add feedback + share buttons for bot messages
   if(role==='bot'){
     var actions=document.createElement('div');
     actions.className='msg-actions';
@@ -350,7 +343,7 @@ function addMsg(role,text){
       dislikeBtn.classList.add('disliked');dislikeBtn.textContent='👎 Noted';
       likeBtn.disabled=true;
       track('feedback','not_helpful');
-      showToast('Thanks - we\'ll keep improving!');
+      showToast('Thanks - we'll keep improving!');
     };
 
     var shareBtn=document.createElement('button');
@@ -367,9 +360,12 @@ function addMsg(role,text){
     actions.appendChild(dislikeBtn);
     actions.appendChild(shareBtn);
     wrapper.appendChild(actions);
+    msgs.appendChild(wrapper);
+    setTimeout(function(){wrapper.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  } else {
+    msgs.appendChild(wrapper);
+    sd();
   }
-
-  msgs.appendChild(wrapper);sd();
 }
 
 function showTyping(){
