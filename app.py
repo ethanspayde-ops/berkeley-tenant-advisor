@@ -169,10 +169,10 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     <p class="subtitle">Free AI-powered legal information for Berkeley tenants. Understand your rights under the Rent Stabilization Ordinance, instantly.</p>
     <p class="tap-hint">Tap a topic to get started:</p>
     <div class="features">
-      <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?')"><div class="feat-text"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div><span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?')"><div class="feat-text"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div><span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?','Rent Control')"><div class="feat-text"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?','Eviction Protections')"><div class="feat-text"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?','Repairs and Habitability')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?','Security Deposits')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
     <button id="start-btn" onclick="startChat()">Ask Your Own Question &rarr;</button>
     <p class="disclaimer">General legal information only, not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
@@ -193,20 +193,20 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
   <div id="sidebar">
     <div class="sec">
       <h3>Common Topics</h3>
-      <button class="tb" onclick="ask('What is rent control in Berkeley and does it apply to my unit?')">&#128203; Rent Control Basics</button>
-      <button class="tb" onclick="ask('What are the rules around rent increases in Berkeley?')">&#128200; Rent Increases</button>
-      <button class="tb" onclick="ask('What are my rights if my landlord tries to evict me?')">&#128682; Eviction Protections</button>
-      <button class="tb" onclick="ask('What is the Berkeley Rent Board and how can it help me?')">&#127963; Rent Board</button>
-      <button class="tb" onclick="ask('What are my rights when it comes to repairs and habitability in Berkeley? What can I do if my landlord refuses to fix things like heat, plumbing, mold, pests, or other problems?')">&#128295; Repairs &amp; Habitability</button>
-      <button class="tb" onclick="ask('What are the just cause for eviction rules in Berkeley?')">&#9878; Just Cause Eviction</button>
-      <button class="tb" onclick="ask('What are my rights regarding security deposits in Berkeley?')">&#128176; Security Deposits</button>
-      <button class="tb" onclick="ask('Can my landlord enter my apartment without notice?')">&#128273; Landlord Entry Rights</button>
-      <button class="tb" onclick="ask('What anti-harassment protections do Berkeley tenants have?')">&#128737; Anti-Harassment</button>
+      <button class="tb" onclick="ask('What is rent control in Berkeley and does it apply to my unit?','Rent Control')">&#128203; Rent Control Basics</button>
+      <button class="tb" onclick="ask('What are the rules around rent increases in Berkeley?','Rent Increases')">&#128200; Rent Increases</button>
+      <button class="tb" onclick="ask('What are my rights if my landlord tries to evict me?','Eviction Protections')">&#128682; Eviction Protections</button>
+      <button class="tb" onclick="ask('What is the Berkeley Rent Board and how can it help me?','Rent Board')">&#127963; Rent Board</button>
+      <button class="tb" onclick="ask('What are my rights when it comes to repairs and habitability in Berkeley? What can I do if my landlord refuses to fix things like heat, plumbing, mold, pests, or other problems?','Repairs and Habitability')">&#128295; Repairs &amp; Habitability</button>
+      <button class="tb" onclick="ask('What are the just cause for eviction rules in Berkeley?','Just Cause Eviction')">&#9878; Just Cause Eviction</button>
+      <button class="tb" onclick="ask('What are my rights regarding security deposits in Berkeley?','Security Deposits')">&#128176; Security Deposits</button>
+      <button class="tb" onclick="ask('Can my landlord enter my apartment without notice?','Landlord Entry')">&#128273; Landlord Entry Rights</button>
+      <button class="tb" onclick="ask('What anti-harassment protections do Berkeley tenants have?','Anti-Harassment')">&#128737; Anti-Harassment</button>
     </div>
     <div class="sec">
       <h3>Resources</h3>
-      <button class="tb" onclick="ask('What organizations in Berkeley can help me with tenant issues?')">&#128222; Get Help / Contacts</button>
-      <button class="tb" onclick="ask('What free legal aid is available for Berkeley tenants?')">&#9878; Legal Aid</button>
+      <button class="tb" onclick="ask('What organizations in Berkeley can help me with tenant issues?','Get Help')">&#128222; Get Help / Contacts</button>
+      <button class="tb" onclick="ask('What free legal aid is available for Berkeley tenants?','Legal Aid')">&#9878; Legal Aid</button>
     </div>
     <div id="notice"><strong>Legal Notice:</strong> General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation.</div>
   </div>
@@ -262,8 +262,9 @@ function startChat(){
   }, 200);
 }
 
-function startWithQuestion(question){
+function startWithQuestion(question, category){
   document.getElementById('landing').style.display='none';
+  if(category) track('category', category);
   setTimeout(function(){
     inp.value=question;
     sendMsg();
@@ -339,6 +340,7 @@ function addMsg(role,text){
     likeBtn.onclick=function(){
       likeBtn.classList.add('liked');likeBtn.textContent='👍 Thanks!';
       dislikeBtn.disabled=true;
+      track('feedback','helpful');
       showToast('Thanks for your feedback!');
     };
 
@@ -347,6 +349,7 @@ function addMsg(role,text){
     dislikeBtn.onclick=function(){
       dislikeBtn.classList.add('disliked');dislikeBtn.textContent='👎 Noted';
       likeBtn.disabled=true;
+      track('feedback','not_helpful');
       showToast('Thanks - we\'ll keep improving!');
     };
 
@@ -377,7 +380,19 @@ function showTyping(){
   d.appendChild(a);d.appendChild(t);msgs.appendChild(d);sd();
 }
 function removeTyping(){var e=document.getElementById('typ');if(e)e.remove();}
-function ask(q){inp.value=q;sendMsg();}
+function track(type, value){
+  fetch('/track', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:type, value:value, ts:new Date().toISOString()})
+  }).catch(function(){});
+}
+
+function ask(q, category){
+  if(category) track('category', category);
+  inp.value=q;
+  sendMsg();
+}
 
 async function sendMsg(){
   var text=inp.value.trim();
@@ -404,6 +419,24 @@ async function sendMsg(){
 @app.route("/")
 def index():
     return Response(HTML, mimetype="text/html; charset=utf-8")
+
+
+@app.route("/track", methods=["POST"])
+def track():
+    """Log category clicks and feedback to Google Sheets via Apps Script."""
+    sheet_url = os.environ.get("TRACKING_SHEET_URL")
+    if not sheet_url:
+        return jsonify({"ok": False, "reason": "no sheet configured"}), 200
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"ok": False}), 400
+
+    try:
+        resp = http_requests.post(sheet_url, json=data, timeout=5)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "reason": str(e)}), 200
 
 
 @app.route("/chat", methods=["POST"])
