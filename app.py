@@ -11,17 +11,17 @@ SYSTEM_PROMPT = """You are an expert advisor on Berkeley, California tenant righ
 SCOPE - VERY IMPORTANT:
 You only answer questions related to tenant rights, housing, renting, landlord-tenant law, and related legal topics in Berkeley and California. This includes rent control, evictions, repairs, deposits, lease agreements, habitability, landlord entry, harassment, and housing resources.
 
-If a user asks about ANYTHING outside of tenant rights and housing (such as food, sports, entertainment, technology, relationships, or any other unrelated topic), respond with exactly this and nothing else:
+If a user asks about ANYTHING outside of tenant rights and housing, respond with exactly this and nothing else:
 "I can only help with Berkeley tenant rights and housing questions. Try asking about rent control, evictions, repairs, security deposits, or your rights as a tenant."
 
-Do not engage with off-topic questions at all. Do not explain. Just return that message.
+Do not engage with off-topic questions at all. Just return that message.
 
 RESPONSE STYLE:
 - Be warm, clear, and concise. Get to the point quickly.
 - Keep responses focused and reasonably short - avoid long walls of text.
 - Use **bold** for important terms, key rights, and critical numbers or deadlines.
 - Use bullet points to break up lists of rights, steps, or options.
-- Do NOT start every response by telling them to call the Rent Board. Only mention the Rent Board phone number (510) 981-7368 when genuinely urgent or directly relevant, such as an active eviction, lockout, or filing a petition.
+- Do NOT start every response by telling them to call the Rent Board. Only mention the Rent Board phone number (510) 981-7368 when genuinely urgent or directly relevant.
 - Never give specific legal advice - provide general guidance and direct to resources when needed.
 - Do not repeat disclaimers in every single message.
 - Use markdown formatting: **bold** text, bullet points with hyphens, and short paragraphs.
@@ -38,7 +38,7 @@ HABITABILITY AND REPAIRS - cover ALL of these when asked, not just mold:
 - Garbage and sanitation facilities
 Tenant remedies include: written notice to landlord, repair-and-deduct (up to one month rent), rent withholding after proper steps, filing a complaint with the Berkeley Rent Board or Code Enforcement, and in serious cases breaking the lease."""
 
-HTML = r"""<!DOCTYPE html>
+HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -51,15 +51,12 @@ HTML = r"""<!DOCTYPE html>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;flex-direction:column;height:100dvh;max-height:100dvh}
-
-/* Berkeley colors: navy #003262, gold #FDB515 */
 #header{background:#003262;color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:3px solid #FDB515;min-height:60px}
 #header h1{font-size:15px;font-weight:bold;display:flex;align-items:center;gap:6px;flex:1;margin-right:10px;line-height:1.3}
 #header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 #header span.badge{font-size:11px;background:rgba(253,181,21,0.2);border:1px solid #FDB515;color:#FDB515;padding:4px 10px;border-radius:20px;white-space:nowrap}
 #reset-btn{font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #reset-btn:hover{background:rgba(255,255,255,0.2)}
-
 #wrap{display:flex;flex:1;overflow:hidden;min-height:0}
 #sidebar{width:220px;background:#fff;border-right:1px solid #d8d3c5;padding:12px;overflow-y:auto;flex-shrink:0}
 #sidebar h3{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#888;margin:0 0 8px 0}
@@ -67,12 +64,10 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 .tb{display:block;width:100%;text-align:left;padding:7px 8px;margin-bottom:3px;background:transparent;border:1px solid transparent;border-radius:6px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .tb:hover{background:#e8eef5;border-color:#003262;color:#003262}
 #notice{padding:9px;background:#fdf8e8;border:1px solid #e8d48a;border-radius:6px;font-size:11px;color:#7a6500;line-height:1.5}
-
 #chat{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 #chat-header{padding:11px 16px;background:#fff;border-bottom:1px solid #d8d3c5;flex-shrink:0}
 #chat-header h2{font-size:15px;margin-bottom:2px;color:#003262}
 #chat-header p{font-size:12px;color:#888}
-
 #msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}
 .msg{display:flex;gap:8px}
 .msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:78%}
@@ -83,19 +78,16 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 .bub{padding:9px 13px;border-radius:13px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}
 .msg.bot .bub{background:#fff;border:1px solid #d8d3c5;border-top-left-radius:3px}
 .msg.user .bub{background:#003262;color:white;border-top-right-radius:3px}
-
 .msg-actions{display:flex;gap:6px;margin-top:4px;margin-left:36px;flex-wrap:wrap}
 .act-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid #d8d3c5;background:#fff;cursor:pointer;color:#666}
 .act-btn:hover{background:#f0f0f0}
 .act-btn.liked{background:#e8f5e9;border-color:#4caf50;color:#2e7d32}
 .act-btn.disliked{background:#ffeaea;border-color:#f44336;color:#c62828}
 .act-btn.copied{background:#e8eef5;border-color:#003262;color:#003262}
-
 .typing{display:flex;gap:4px;padding:11px 13px;background:#fff;border:1px solid #d8d3c5;border-radius:13px;border-top-left-radius:3px}
 .dot{width:6px;height:6px;background:#888;border-radius:50%;animation:boun 1.2s infinite}
 .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
 @keyframes boun{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
-
 #input-bar{padding:10px 14px;background:#fff;border-top:1px solid #d8d3c5;flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 #input-row{display:flex;gap:8px;align-items:flex-end;background:#f4f1ea;border:2px solid #d8d3c5;border-radius:11px;padding:8px 11px}
 #input-row:focus-within{border-color:#003262}
@@ -105,15 +97,12 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #sendbtn:hover{background:#002244}
 #sendbtn:disabled{background:#bbb;cursor:not-allowed}
 #hint{font-size:11px;color:#aaa;margin-top:4px;text-align:center}
-
 #welcome{background:#fff;border:1px solid #d8d3c5;border-radius:11px;padding:14px}
 #welcome h3{font-size:15px;margin-bottom:6px;color:#003262}
 #welcome p{font-size:13px;color:#888;margin-bottom:11px;line-height:1.5}
 #sugs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .sb{text-align:left;padding:8px 9px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:7px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .sb:hover{background:#e8eef5;border-color:#003262;color:#003262}
-
-/* Landing page - no scroll, fits screen */
 #landing{position:fixed;inset:0;background:#003262;z-index:999;display:flex;flex-direction:column;overflow:hidden}
 #landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 20px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));overflow:hidden;max-width:560px;margin:0 auto;width:100%}
 #landing h1{color:#FDB515;font-size:26px;font-weight:bold;text-align:center;line-height:1.2;margin:0}
@@ -128,41 +117,16 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #start-btn{background:#FDB515;color:#003262;font-size:15px;font-weight:bold;padding:14px 28px;border:none;border-radius:12px;cursor:pointer;transition:all .15s;width:100%;max-width:380px}
 #start-btn:hover,#start-btn:active{background:#ffc93c}
 #landing .disclaimer{color:rgba(255,255,255,0.38);font-size:10.5px;text-align:center;max-width:380px;line-height:1.5;margin:0}
-@media(min-width:581px){
-  #landing h1{font-size:30px}
-  #landing .subtitle{font-size:15px}
-  #landing .feat{font-size:14px;padding:13px 16px}
-  #landing .feat strong{font-size:14px}
-  #landing-inner{gap:22px;justify-content:center}
-}
-@media(max-height:680px){
-  #landing-inner{gap:12px}
-  #landing h1{font-size:20px}
-  #landing .subtitle{font-size:12px}
-  #landing .feat{padding:9px 12px;font-size:12px}
-  #landing .feat strong{font-size:12px}
-}
-
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
-
-@media(max-width:580px){
-  #sidebar{display:none}
-  #sugs{grid-template-columns:1fr 1fr}
-  #chat-header{display:none}
-  #msgs{padding:10px}
-  .bub{font-size:13px}
-}
-@media(max-width:380px){
-  #sugs{grid-template-columns:1fr}
-  #header h1{font-size:12px}
-  #reset-btn{font-size:10px;padding:4px 7px}
-}
+@media(min-width:581px){#landing h1{font-size:30px}#landing .subtitle{font-size:15px}#landing .feat{font-size:14px;padding:13px 16px}#landing .feat strong{font-size:14px}#landing-inner{gap:22px;justify-content:center}}
+@media(max-height:680px){#landing-inner{gap:12px}#landing h1{font-size:20px}#landing .subtitle{font-size:12px}#landing .feat{padding:9px 12px;font-size:12px}#landing .feat strong{font-size:12px}}
+@media(max-width:580px){#sidebar{display:none}#sugs{grid-template-columns:1fr 1fr}#chat-header{display:none}#msgs{padding:10px}.bub{font-size:13px}}
+@media(max-width:380px){#sugs{grid-template-columns:1fr}#header h1{font-size:12px}#reset-btn{font-size:10px;padding:4px 7px}}
 </style>
 </head>
 <body>
 
-<!-- Landing Page -->
 <div id="landing">
   <div id="landing-inner">
     <h1>&#127968; Berkeley Tenant Rights Advisor</h1>
@@ -171,10 +135,10 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     <div class="features">
       <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?','Rent Control')"><div class="feat-text"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div><span class="feat-arrow">&#8594;</span></div>
       <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?','Eviction Protections')"><div class="feat-text"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div><span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?','Repairs and Habitability')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords refuse to fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights regarding repairs and habitability in Berkeley?','Repairs and Habitability')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords refuse to fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
       <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?','Security Deposits')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
-    <button id="start-btn" onclick="startChat()">Ask Your Own Question &rarr;</button>
+    <button id="start-btn" onclick="startChat()">Ask Your Own Question &#8594;</button>
     <p class="disclaimer">General legal information only, not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
   </div>
 </div>
@@ -197,7 +161,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <button class="tb" onclick="ask('What are the rules around rent increases in Berkeley?','Rent Increases')">&#128200; Rent Increases</button>
       <button class="tb" onclick="ask('What are my rights if my landlord tries to evict me?','Eviction Protections')">&#128682; Eviction Protections</button>
       <button class="tb" onclick="ask('What is the Berkeley Rent Board and how can it help me?','Rent Board')">&#127963; Rent Board</button>
-      <button class="tb" onclick="ask('What are my rights when it comes to repairs and habitability in Berkeley? What can I do if my landlord refuses to fix things like heat, plumbing, mold, pests, or other problems?','Repairs and Habitability')">&#128295; Repairs &amp; Habitability</button>
+      <button class="tb" onclick="ask('What are my rights regarding repairs and habitability in Berkeley?','Repairs and Habitability')">&#128295; Repairs &amp; Habitability</button>
       <button class="tb" onclick="ask('What are the just cause for eviction rules in Berkeley?','Just Cause Eviction')">&#9878; Just Cause Eviction</button>
       <button class="tb" onclick="ask('What are my rights regarding security deposits in Berkeley?','Security Deposits')">&#128176; Security Deposits</button>
       <button class="tb" onclick="ask('Can my landlord enter my apartment without notice?','Landlord Entry')">&#128273; Landlord Entry Rights</button>
@@ -226,7 +190,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
             <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?')">&#127962; Does rent control apply to my unit?</button>
             <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?')">&#128200; My landlord wants to raise my rent</button>
             <button class="sb" onclick="ask('I received an eviction notice in Berkeley. What should I do?')">&#128680; I got an eviction notice</button>
-            <button class="sb" onclick="ask('Landlord not making repairs. What are my rights in Berkeley?')">&#128295; My landlord won&#39;t make repairs</button>
+            <button class="sb" onclick="ask('Landlord not making repairs. What are my rights in Berkeley?')">&#128295; My landlord refuses to make repairs</button>
           </div>
         </div>
       </div>
@@ -249,27 +213,10 @@ var inp=document.getElementById('inp');
 var btn=document.getElementById('sendbtn');
 var msgs=document.getElementById('msgs');
 
-function startChat(){
-  document.getElementById('landing').style.display='none';
-  setTimeout(function(){
-    inp.focus();
-    inp.scrollIntoView({behavior:'smooth',block:'end'});
-    // Flash the input bar to draw attention on mobile
-    var row = document.getElementById('input-row');
-    row.style.transition='border-color .3s';
-    row.style.borderColor='#FDB515';
-    setTimeout(function(){row.style.borderColor='';},1200);
-  }, 200);
-}
+inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px';});
+inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
 
-function startWithQuestion(question, category){
-  document.getElementById('landing').style.display='none';
-  if(category) track('category', category);
-  setTimeout(function(){
-    inp.value=question;
-    sendMsg();
-  }, 150);
-}
+function sd(){msgs.scrollTop=msgs.scrollHeight;}
 
 function showToast(msg){
   var t=document.getElementById('toast');
@@ -278,30 +225,81 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove('show');},2000);
 }
 
+function track(type,value){
+  try{
+    fetch('/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:type,value:value,ts:new Date().toISOString()})}).catch(function(){});
+  }catch(e){}
+}
+
+function startChat(){
+  document.getElementById('landing').style.display='none';
+  setTimeout(function(){
+    try{
+      inp.focus();
+      var row=document.getElementById('input-row');
+      row.style.transition='border-color .3s';
+      row.style.borderColor='#FDB515';
+      setTimeout(function(){row.style.borderColor='';},1200);
+    }catch(e){}
+  },200);
+}
+
+function startWithQuestion(question,category){
+  document.getElementById('landing').style.display='none';
+  if(category) track('category',category);
+  setTimeout(function(){inp.value=question;sendMsg();},150);
+}
+
 function resetChat(){
   hist=[];
   msgs.innerHTML='';
   var welcome=document.createElement('div');
   welcome.className='msg bot';
-  welcome.innerHTML='<div class="av">&#127968;</div><div id="welcome"><h3>Welcome, Berkeley Tenant!</h3><p style="font-size:13px;color:#888;margin-bottom:11px;line-height:1.5">Conversation reset. Ask me anything about your tenant rights.</p><div id="sugs" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="sb" onclick="ask(\'Does rent control apply to my Berkeley apartment?\')">&#127962; Does rent control apply to my unit?</button><button class="sb" onclick="ask(\'My landlord wants to raise my rent. What are the limits in Berkeley?\')">&#128200; My landlord wants to raise my rent</button><button class="sb" onclick="ask(\'I received an eviction notice in Berkeley. What should I do?\')">&#128680; I got an eviction notice</button><button class="sb" onclick="ask(\'My landlord is not making repairs to my unit. What are my rights and what steps can I take?\')">&#128295; My landlord won&#39;t make repairs</button></div></div>';
+  var av=document.createElement('div');
+  av.className='av';
+  av.textContent=String.fromCodePoint(0x1F3E0);
+  var box=document.createElement('div');
+  box.id='welcome';
+  var h3=document.createElement('h3');
+  h3.textContent='Welcome, Berkeley Tenant!';
+  h3.style.cssText='font-size:15px;margin-bottom:6px;color:#003262';
+  var p=document.createElement('p');
+  p.textContent='Conversation reset. Ask me anything about your tenant rights.';
+  p.style.cssText='font-size:13px;color:#888;margin-bottom:11px;line-height:1.5';
+  var sugs=document.createElement('div');
+  sugs.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px';
+  var items=[
+    ['Does rent control apply to my Berkeley apartment?','&#127962; Does rent control apply?'],
+    ['My landlord wants to raise my rent. What are the limits in Berkeley?','&#128200; Landlord raising my rent'],
+    ['I received an eviction notice in Berkeley. What should I do?','&#128680; I got an eviction notice'],
+    ['Landlord not making repairs. What are my rights in Berkeley?','&#128295; Landlord not making repairs']
+  ];
+  items.forEach(function(item){
+    var b=document.createElement('button');
+    b.className='sb';
+    b.innerHTML=item[1];
+    b.onclick=(function(q){return function(){ask(q);};})(item[0]);
+    sugs.appendChild(b);
+  });
+  box.appendChild(h3);
+  box.appendChild(p);
+  box.appendChild(sugs);
+  welcome.appendChild(av);
+  welcome.appendChild(box);
   msgs.appendChild(welcome);
   showToast('Chat reset!');
 }
 
-inp.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px';});
-inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
-function sd(){msgs.scrollTop=msgs.scrollHeight;}
-
 function renderMarkdown(text){
-  text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-  var lines=text.split('\n');
+  text=text.replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>');
+  var lines=text.split('\\n');
   var out='';var inList=false;
   for(var i=0;i<lines.length;i++){
     var line=lines[i];
-    if(line.match(/^\s*-\s+/)){
+    if(line.match(/^\\s*-\\s+/)){
       if(!inList){out+='<ul style="margin:6px 0 6px 16px">';inList=true;}
-      out+='<li style="margin-bottom:3px">'+line.replace(/^\s*-\s+/,'')+'</li>';
-    } else {
+      out+='<li style="margin-bottom:3px">'+line.replace(/^\\s*-\\s+/,'')+'</li>';
+    }else{
       if(inList){out+='</ul>';inList=false;}
       if(line.trim()){out+='<p style="margin:4px 0">'+line+'</p>';}
     }
@@ -312,81 +310,47 @@ function renderMarkdown(text){
 
 function addMsg(role,text){
   var wrapper=document.createElement('div');
-  wrapper.style.display='flex';
-  wrapper.style.flexDirection='column';
-
+  wrapper.style.cssText='display:flex;flex-direction:column';
   var d=document.createElement('div');d.className='msg '+role;
   var a=document.createElement('div');a.className='av';
-  a.textContent=role==='bot'?'🏠':'You';
+  a.textContent=role==='bot'?String.fromCodePoint(0x1F3E0):'You';
   var b=document.createElement('div');b.className='bub';
   if(role==='bot'){b.innerHTML=renderMarkdown(text);}
   else{b.textContent=text;}
   d.appendChild(a);d.appendChild(b);
   wrapper.appendChild(d);
-
   if(role==='bot'){
     var actions=document.createElement('div');
     actions.className='msg-actions';
-
     var likeBtn=document.createElement('button');
-    likeBtn.className='act-btn';likeBtn.textContent='👍 Helpful';
-    likeBtn.onclick=function(){
-      likeBtn.classList.add('liked');likeBtn.textContent='👍 Thanks!';
-      dislikeBtn.disabled=true;
-      track('feedback','helpful');
-      showToast('Thanks for your feedback!');
-    };
-
+    likeBtn.className='act-btn';likeBtn.textContent='\\uD83D\\uDC4D Helpful';
     var dislikeBtn=document.createElement('button');
-    dislikeBtn.className='act-btn';dislikeBtn.textContent='👎 Not helpful';
-    dislikeBtn.onclick=function(){
-      dislikeBtn.classList.add('disliked');dislikeBtn.textContent='👎 Noted';
-      likeBtn.disabled=true;
-      showToast('Thanks - we'll keep improving!');
-    };
-
+    dislikeBtn.className='act-btn';dislikeBtn.textContent='\\uD83D\\uDC4E Not helpful';
     var shareBtn=document.createElement('button');
-    shareBtn.className='act-btn';shareBtn.textContent='🔗 Copy';
-    shareBtn.onclick=function(){
-      navigator.clipboard.writeText(text).then(function(){
-        shareBtn.classList.add('copied');shareBtn.textContent='✓ Copied!';
-        showToast('Answer copied to clipboard!');
-        setTimeout(function(){shareBtn.classList.remove('copied');shareBtn.textContent='🔗 Copy';},2000);
-      });
-    };
-
-    actions.appendChild(likeBtn);
-    actions.appendChild(dislikeBtn);
-    actions.appendChild(shareBtn);
+    shareBtn.className='act-btn';shareBtn.textContent='\\uD83D\\uDD17 Copy';
+    likeBtn.onclick=function(){likeBtn.classList.add('liked');likeBtn.textContent='\\uD83D\\uDC4D Thanks!';dislikeBtn.disabled=true;track('feedback','helpful');showToast('Thanks for your feedback!');};
+    dislikeBtn.onclick=function(){dislikeBtn.classList.add('disliked');dislikeBtn.textContent='\\uD83D\\uDC4E Noted';likeBtn.disabled=true;track('feedback','not_helpful');showToast('Thanks - we will keep improving!');};
+    shareBtn.onclick=function(){navigator.clipboard.writeText(text).then(function(){shareBtn.classList.add('copied');shareBtn.textContent='\\u2713 Copied!';showToast('Answer copied to clipboard!');setTimeout(function(){shareBtn.classList.remove('copied');shareBtn.textContent='\\uD83D\\uDD17 Copy';},2000);});};
+    actions.appendChild(likeBtn);actions.appendChild(dislikeBtn);actions.appendChild(shareBtn);
     wrapper.appendChild(actions);
     msgs.appendChild(wrapper);
     setTimeout(function(){wrapper.scrollIntoView({behavior:'smooth',block:'start'});},50);
-  } else {
-    msgs.appendChild(wrapper);
-    sd();
+  }else{
+    msgs.appendChild(wrapper);sd();
   }
 }
 
 function showTyping(){
   var d=document.createElement('div');d.className='msg bot';d.id='typ';
-  var a=document.createElement('div');a.className='av';a.textContent='🏠';
+  var a=document.createElement('div');a.className='av';a.textContent=String.fromCodePoint(0x1F3E0);
   var t=document.createElement('div');t.className='typing';
   t.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
   d.appendChild(a);d.appendChild(t);msgs.appendChild(d);sd();
 }
 function removeTyping(){var e=document.getElementById('typ');if(e)e.remove();}
-function track(type, value){
-  try {
-    fetch('/track', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:type, value:value, ts:new Date().toISOString()})
-    }).catch(function(){});
-  } catch(e){}
-}
 
-function ask(q, category){
-  if(category) track('category', category);
+function ask(q,category){
+  if(category) track('category',category);
   inp.value=q;
   sendMsg();
 }
@@ -422,16 +386,15 @@ def index():
 def track():
     sheet_url = os.environ.get("TRACKING_SHEET_URL")
     if not sheet_url:
-        return jsonify({"ok": False, "reason": "no sheet configured"}), 200
+        return jsonify({"ok": False}), 200
     data = request.get_json()
     if not data:
         return jsonify({"ok": False}), 400
     try:
-        resp = http_requests.post(sheet_url, json=data, timeout=5)
+        http_requests.post(sheet_url, json=data, timeout=5)
         return jsonify({"ok": True})
     except Exception as e:
-        return jsonify({"ok": False, "reason": str(e)}), 200
-
+        return jsonify({"ok": False}), 200
 
 
 @app.route("/chat", methods=["POST"])
@@ -456,31 +419,19 @@ def chat():
     try:
         resp = http_requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model": "llama-3.3-70b-versatile",
-                "messages": groq_messages,
-                "max_tokens": 1024,
-                "temperature": 0.7
-            },
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={"model": "llama-3.3-70b-versatile", "messages": groq_messages, "max_tokens": 1024, "temperature": 0.7},
             timeout=30
         )
-
         result = resp.json()
-
         if resp.status_code == 429:
             return jsonify({"error": "Rate limit reached. Please try again in a moment."}), 429
         if resp.status_code == 401:
             return jsonify({"error": "Invalid API key."}), 401
         if resp.status_code != 200:
             return jsonify({"error": f"API error {resp.status_code}: {str(result)}"}), 500
-
         reply = result["choices"][0]["message"]["content"]
         return jsonify({"reply": reply.strip()})
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
