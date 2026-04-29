@@ -342,7 +342,6 @@ function addMsg(role,text){
     dislikeBtn.onclick=function(){
       dislikeBtn.classList.add('disliked');dislikeBtn.textContent='👎 Noted';
       likeBtn.disabled=true;
-      track('feedback','not_helpful');
       showToast('Thanks - we'll keep improving!');
     };
 
@@ -377,11 +376,13 @@ function showTyping(){
 }
 function removeTyping(){var e=document.getElementById('typ');if(e)e.remove();}
 function track(type, value){
-  fetch('/track', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({type:type, value:value, ts:new Date().toISOString()})
-  }).catch(function(){});
+  try {
+    fetch('/track', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:type, value:value, ts:new Date().toISOString()})
+    }).catch(function(){});
+  } catch(e){}
 }
 
 function ask(q, category){
@@ -419,20 +420,18 @@ def index():
 
 @app.route("/track", methods=["POST"])
 def track():
-    """Log category clicks and feedback to Google Sheets via Apps Script."""
     sheet_url = os.environ.get("TRACKING_SHEET_URL")
     if not sheet_url:
         return jsonify({"ok": False, "reason": "no sheet configured"}), 200
-
     data = request.get_json()
     if not data:
         return jsonify({"ok": False}), 400
-
     try:
         resp = http_requests.post(sheet_url, json=data, timeout=5)
         return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"ok": False, "reason": str(e)}), 200
+
 
 
 @app.route("/chat", methods=["POST"])
