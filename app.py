@@ -171,7 +171,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     <div class="features">
       <div class="feat" onclick="startWithQuestion('What is rent control in Berkeley and does it apply to my unit?','Rent Control')"><div class="feat-text"><strong>&#128203; Rent Control</strong>Learn if your unit is covered and what protections you have.</div><span class="feat-arrow">&#8594;</span></div>
       <div class="feat" onclick="startWithQuestion('What are my rights if my landlord tries to evict me in Berkeley?','Eviction Protections')"><div class="feat-text"><strong>&#128682; Eviction Rights</strong>Understand just cause rules and what to do if you get a notice.</div><span class="feat-arrow">&#8594;</span></div>
-      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?','Repairs and Habitability')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords won't fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
+      <div class="feat" onclick="startWithQuestion('What are my rights when it comes to repairs and habitability in Berkeley?','Repairs and Habitability')"><div class="feat-text"><strong>&#128295; Repairs</strong>Know your rights when landlords refuse to fix habitability issues.</div><span class="feat-arrow">&#8594;</span></div>
       <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?','Security Deposits')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
     <button id="start-btn" onclick="startChat()">Ask Your Own Question &rarr;</button>
@@ -226,7 +226,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
             <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?')">&#127962; Does rent control apply to my unit?</button>
             <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?')">&#128200; My landlord wants to raise my rent</button>
             <button class="sb" onclick="ask('I received an eviction notice in Berkeley. What should I do?')">&#128680; I got an eviction notice</button>
-            <button class="sb" onclick="ask('My landlord is not making repairs to my unit. What are my rights and what steps can I take?')">&#128295; My landlord won't make repairs</button>
+            <button class="sb" onclick="ask('Landlord not making repairs. What are my rights in Berkeley?')">&#128295; My landlord won&#39;t make repairs</button>
           </div>
         </div>
       </div>
@@ -283,7 +283,7 @@ function resetChat(){
   msgs.innerHTML='';
   var welcome=document.createElement('div');
   welcome.className='msg bot';
-  welcome.innerHTML='<div class="av">&#127968;</div><div id="welcome"><h3>Welcome, Berkeley Tenant!</h3><p style="font-size:13px;color:#888;margin-bottom:11px;line-height:1.5">Conversation reset. Ask me anything about your tenant rights.</p><div id="sugs" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="sb" onclick="ask(\'Does rent control apply to my Berkeley apartment?\')">&#127962; Does rent control apply to my unit?</button><button class="sb" onclick="ask(\'My landlord wants to raise my rent. What are the limits in Berkeley?\')">&#128200; My landlord wants to raise my rent</button><button class="sb" onclick="ask(\'I received an eviction notice in Berkeley. What should I do?\')">&#128680; I got an eviction notice</button><button class="sb" onclick="ask(\'My landlord is not making repairs to my unit. What are my rights and what steps can I take?\')">&#128295; My landlord won\'t make repairs</button></div></div>';
+  welcome.innerHTML='<div class="av">&#127968;</div><div id="welcome"><h3>Welcome, Berkeley Tenant!</h3><p style="font-size:13px;color:#888;margin-bottom:11px;line-height:1.5">Conversation reset. Ask me anything about your tenant rights.</p><div id="sugs" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="sb" onclick="ask(\'Does rent control apply to my Berkeley apartment?\')">&#127962; Does rent control apply to my unit?</button><button class="sb" onclick="ask(\'My landlord wants to raise my rent. What are the limits in Berkeley?\')">&#128200; My landlord wants to raise my rent</button><button class="sb" onclick="ask(\'I received an eviction notice in Berkeley. What should I do?\')">&#128680; I got an eviction notice</button><button class="sb" onclick="ask(\'My landlord is not making repairs to my unit. What are my rights and what steps can I take?\')">&#128295; My landlord won&#39;t make repairs</button></div></div>';
   msgs.appendChild(welcome);
   showToast('Chat reset!');
 }
