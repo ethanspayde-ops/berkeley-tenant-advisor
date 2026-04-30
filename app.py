@@ -206,10 +206,10 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
           <h3>Welcome, Berkeley Tenant!</h3>
           <p>I can help you understand your rights under Berkeley's Rent Stabilization Ordinance. No account or API key needed - just ask below.</p>
           <div id="sugs">
-            <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?')">&#127962; Does rent control apply to my unit?</button>
-            <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?')">&#128200; My landlord wants to raise my rent</button>
-            <button class="sb" onclick="ask('I received an eviction notice in Berkeley. What should I do?')">&#128680; I got an eviction notice</button>
-            <button class="sb" onclick="ask('Landlord not making repairs. What are my rights in Berkeley?')">&#128295; My landlord refuses to make repairs</button>
+            <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?','Rent Control')">&#127962; Does rent control apply to my unit?</button>
+            <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?','Rent Increases')">&#128200; My landlord wants to raise my rent</button>
+            <button class="sb" onclick="ask('I received an eviction notice in Berkeley. What should I do?','Eviction Protections')">&#128680; I got an eviction notice</button>
+            <button class="sb" onclick="ask('Landlord not making repairs. What are my rights in Berkeley?','Repairs and Habitability')">&#128295; My landlord refuses to make repairs</button>
           </div>
         </div>
       </div>
