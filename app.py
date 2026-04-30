@@ -121,13 +121,13 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #toast.show{opacity:1}
 @media(min-width:581px){#landing h1{font-size:30px}#landing .subtitle{font-size:15px}#landing .feat{font-size:14px;padding:13px 16px}#landing .feat strong{font-size:14px}#landing-inner{gap:22px;justify-content:center}}
 @media(max-height:680px){#landing-inner{gap:12px}#landing h1{font-size:20px}#landing .subtitle{font-size:12px}#landing .feat{padding:9px 12px;font-size:12px}#landing .feat strong{font-size:12px}}
-@media(max-width:580px){#sidebar{display:none}#sugs{grid-template-columns:1fr 1fr}#chat-header{display:none}#msgs{padding:10px}.bub{font-size:13px}#mobile-topics{display:flex}#mobile-notice{display:block}}
-@media(max-width:380px){#sugs{grid-template-columns:1fr}#header h1{font-size:12px}#reset-btn{font-size:10px;padding:4px 7px}}
 #mobile-topics{display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 12px;gap:8px;background:#fff;border-bottom:1px solid #d8d3c5;flex-shrink:0;scrollbar-width:none}
 #mobile-topics::-webkit-scrollbar{display:none}
 .mobile-chip{flex-shrink:0;padding:6px 12px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:20px;font-size:12px;color:#1a1814;cursor:pointer;white-space:nowrap}
 .mobile-chip:active{background:#e8eef5;border-color:#003262;color:#003262}
 #mobile-notice{display:none;padding:8px 12px;background:#fdf8e8;border-top:1px solid #e8d48a;font-size:11px;color:#7a6500;line-height:1.5;flex-shrink:0;text-align:center}
+@media(max-width:580px){#sidebar{display:none}#sugs{grid-template-columns:1fr 1fr}#chat-header{display:none}#msgs{padding:10px}.bub{font-size:13px}#mobile-topics{display:flex}#mobile-notice{display:block}}
+@media(max-width:380px){#sugs{grid-template-columns:1fr}#header h1{font-size:12px}#reset-btn{font-size:10px;padding:4px 7px}}
 </style>
 </head>
 <body>
