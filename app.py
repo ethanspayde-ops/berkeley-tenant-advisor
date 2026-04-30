@@ -293,16 +293,16 @@ function resetChat(){
   var sugs=document.createElement('div');
   sugs.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px';
   var items=[
-    ['Does rent control apply to my Berkeley apartment?','&#127962; Does rent control apply?'],
-    ['My landlord wants to raise my rent. What are the limits in Berkeley?','&#128200; Landlord raising my rent'],
-    ['I received an eviction notice in Berkeley. What should I do?','&#128680; I got an eviction notice'],
-    ['Landlord not making repairs. What are my rights in Berkeley?','&#128295; Landlord not making repairs']
+    ['Does rent control apply to my Berkeley apartment?','&#127962; Does rent control apply?','Rent Control'],
+    ['My landlord wants to raise my rent. What are the limits in Berkeley?','&#128200; Landlord raising my rent','Rent Increases'],
+    ['I received an eviction notice in Berkeley. What should I do?','&#128680; I got an eviction notice','Eviction Protections'],
+    ['Landlord not making repairs. What are my rights in Berkeley?','&#128295; Landlord not making repairs','Repairs and Habitability']
   ];
   items.forEach(function(item){
     var b=document.createElement('button');
     b.className='sb';
     b.innerHTML=item[1];
-    b.onclick=(function(q){return function(){ask(q);};})(item[0]);
+    b.onclick=(function(q,cat){return function(){ask(q,cat);};})(item[0],item[2]);
     sugs.appendChild(b);
   });
   box.appendChild(h3);
