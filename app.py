@@ -36,7 +36,25 @@ HABITABILITY AND REPAIRS - cover ALL of these when asked, not just mold:
 - Broken appliances included in the lease
 - Structural safety issues
 - Garbage and sanitation facilities
-Tenant remedies include: written notice to landlord, repair-and-deduct (up to one month rent), rent withholding after proper steps, filing a complaint with the Berkeley Rent Board or Code Enforcement, and in serious cases breaking the lease."""
+Tenant remedies include: written notice to landlord, repair-and-deduct (up to one month rent), rent withholding after proper steps, filing a complaint with the Berkeley Rent Board or Code Enforcement, and in serious cases breaking the lease.
+
+CITATIONS AND SOURCES:
+- Always cite the specific legal source when stating a legal rule. Examples:
+  - "Under BMC Section 13.76.130, landlords must..." 
+  - "California Civil Code Section 1950.5 requires..."
+  - "BMC Chapter 13.84 provides that..."
+- When mentioning the Berkeley Rent Board, always include this exact hyperlink in markdown: [Berkeley Rent Board](https://www.cityofberkeley.info/rent)
+- When mentioning the Rent Board phone number, format it as: (510) 981-7368
+
+ATTORNEY REFERRAL:
+- When a user needs professional help, recommend consulting a tenant rights attorney FIRST, then the Rent Board as a secondary option.
+- Suggested language: "For your specific situation, I recommend consulting a tenant rights attorney. You can find free or low-cost help through the East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300."
+- Do not suggest the Rent Board as the primary resource for legal advice — they provide administrative services, not legal counsel.
+
+ACCURACY:
+- Only state legal rules you are confident about. If uncertain, say "You may want to verify this with an attorney" rather than stating it as fact.
+- Do not make definitive statements about arbitration clauses — this is a complex area and users should consult an attorney.
+- Avoid overstating tenant remedies — always note that procedures must be followed correctly before exercising rights like rent withholding."""
 
 HTML = """<!DOCTYPE html>
 <html lang="en">
@@ -119,6 +137,14 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #landing .disclaimer{color:rgba(255,255,255,0.38);font-size:10.5px;text-align:center;max-width:380px;line-height:1.5;margin:0}
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
+#disclaimer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px}
+#disclaimer-box{background:white;border-radius:14px;padding:28px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+#disclaimer-box h2{font-size:17px;color:#003262;margin-bottom:12px;font-family:Arial,sans-serif}
+#disclaimer-box p{font-size:13px;color:#444;line-height:1.7;margin-bottom:10px;font-family:Arial,sans-serif}
+#disclaimer-box ul{font-size:13px;color:#444;line-height:1.8;margin:8px 0 14px 18px;font-family:Arial,sans-serif}
+#disclaimer-accept{width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;margin-top:4px}
+#disclaimer-accept:hover{background:#002244}
+#disclaimer-box .disclaimer-footer{font-size:11px;color:#888;text-align:center;margin-top:10px;font-family:Arial,sans-serif;line-height:1.5}
 @media(min-width:581px){#landing h1{font-size:30px}#landing .subtitle{font-size:15px}#landing .feat{font-size:14px;padding:13px 16px}#landing .feat strong{font-size:14px}#landing-inner{gap:22px;justify-content:center}}
 @media(max-height:680px){#landing-inner{gap:12px}#landing h1{font-size:20px}#landing .subtitle{font-size:12px}#landing .feat{padding:9px 12px;font-size:12px}#landing .feat strong{font-size:12px}}
 #mobile-topics{display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 12px;gap:8px;background:#fff;border-bottom:1px solid #d8d3c5;flex-shrink:0;scrollbar-width:none}
@@ -131,6 +157,22 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 </style>
 </head>
 <body>
+
+<!-- Legal Disclaimer Popup -->
+<div id="disclaimer-overlay">
+  <div id="disclaimer-box">
+    <h2>&#9878; Before You Continue</h2>
+    <p>The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong> — not legal advice. By using this tool you acknowledge:</p>
+    <ul>
+      <li>This tool does not create an attorney-client relationship</li>
+      <li>Information may not apply to your specific situation</li>
+      <li>For legal advice, consult a licensed tenant rights attorney</li>
+      <li>For urgent issues, contact the Berkeley Rent Board at (510) 981-7368</li>
+    </ul>
+    <button id="disclaimer-accept" onclick="acceptDisclaimer()">I Understand — Continue</button>
+    <p class="disclaimer-footer">Free legal help: East Bay Community Law Center (510) 548-4040 &nbsp;|&nbsp; Bay Area Legal Aid (415) 982-1300</p>
+  </div>
+</div>
 
 <div id="landing">
   <div id="landing-inner">
@@ -249,6 +291,10 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove('show');},2000);
 }
 
+function acceptDisclaimer(){
+  document.getElementById('disclaimer-overlay').style.display='none';
+}
+
 function track(type,value){
   try{
     fetch('/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:type,value:value,ts:new Date().toISOString()})}).catch(function(){});
@@ -315,14 +361,17 @@ function resetChat(){
 }
 
 function renderMarkdown(text){
-  text=text.replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>');
-  var lines=text.split('\\n');
+  // Links [text](url)
+  text=text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" style="color:#003262;font-weight:bold;text-decoration:underline">$1</a>');
+  // Bold
+  text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  var lines=text.split('\n');
   var out='';var inList=false;
   for(var i=0;i<lines.length;i++){
     var line=lines[i];
-    if(line.match(/^\\s*-\\s+/)){
+    if(line.match(/^\s*-\s+/)){
       if(!inList){out+='<ul style="margin:6px 0 6px 16px">';inList=true;}
-      out+='<li style="margin-bottom:3px">'+line.replace(/^\\s*-\\s+/,'')+'</li>';
+      out+='<li style="margin-bottom:3px">'+line.replace(/^\s*-\s+/,'')+'</li>';
     }else{
       if(inList){out+='</ul>';inList=false;}
       if(line.trim()){out+='<p style="margin:4px 0">'+line+'</p>';}
