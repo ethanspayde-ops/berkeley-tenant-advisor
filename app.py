@@ -53,8 +53,29 @@ ATTORNEY REFERRAL:
 
 ACCURACY:
 - Only state legal rules you are confident about. If uncertain, say "You may want to verify this with an attorney" rather than stating it as fact.
-- Do not make definitive statements about arbitration clauses — this is a complex area and users should consult an attorney.
-- Avoid overstating tenant remedies — always note that procedures must be followed correctly before exercising rights like rent withholding."""
+- Do not make definitive statements about arbitration clauses - this is a complex area and users should consult an attorney.
+- Avoid overstating tenant remedies - always note that procedures must be followed correctly before exercising rights like rent withholding.
+
+CONFIDENCE AND SOURCE FORMAT:
+At the end of every response, add a section formatted exactly like this:
+
+---
+**Source:** [List the specific statutes, ordinance sections, or legal sources the answer is based on. Examples: BMC Section 13.76.130, California Civil Code Section 1950.5, BMC Chapter 13.84. If multiple sources, list each one.]
+**Confidence:** [Choose one: High / Medium / Low] - [One sentence explaining why. High = clearly established law directly on point. Medium = generally accurate but fact-specific details may vary. Low = complex or unsettled area, strongly recommend attorney consultation.]
+---
+
+Examples:
+**Source:** BMC Section 13.76.130 (Rent Stabilization Ordinance)
+**Confidence:** High - This is a clearly established rule under Berkeley's RSO that applies to all covered units.
+
+**Source:** California Civil Code Section 1950.5
+**Confidence:** High - Security deposit rules are well established under state law.
+
+**Source:** BMC Chapter 13.84 (Eviction for Cause Ordinance), California Civil Code Section 1946.2
+**Confidence:** Medium - Just cause rules are clear but whether they apply depends on your specific unit type and tenancy date.
+
+**Source:** General landlord-tenant principles, California Civil Code Section 1941
+**Confidence:** Low - Habitability disputes are highly fact-specific. Strongly recommend consulting an attorney before taking action."""
 
 HTML = """<!DOCTYPE html>
 <html lang="en">
@@ -147,6 +168,10 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #disclaimer-box .disclaimer-footer{font-size:11px;color:#888;text-align:center;margin-top:10px;font-family:Arial,sans-serif;line-height:1.5}
 @media(min-width:581px){#landing h1{font-size:30px}#landing .subtitle{font-size:15px}#landing .feat{font-size:14px;padding:13px 16px}#landing .feat strong{font-size:14px}#landing-inner{gap:22px;justify-content:center}}
 @media(max-height:680px){#landing-inner{gap:12px}#landing h1{font-size:20px}#landing .subtitle{font-size:12px}#landing .feat{padding:9px 12px;font-size:12px}#landing .feat strong{font-size:12px}}
+.source-box{background:#f0f4f8;border-left:3px solid #003262;border-radius:0 6px 6px 0;padding:8px 12px;margin-top:10px;font-size:12px;color:#444;line-height:1.6}
+.source-box .conf-high{color:#2e7d32;font-weight:bold}
+.source-box .conf-med{color:#e65100;font-weight:bold}
+.source-box .conf-low{color:#c62828;font-weight:bold}
 #mobile-topics{display:none;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 12px;gap:8px;background:#fff;border-bottom:1px solid #d8d3c5;flex-shrink:0;scrollbar-width:none}
 #mobile-topics::-webkit-scrollbar{display:none}
 .mobile-chip{flex-shrink:0;padding:6px 12px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:20px;font-size:12px;color:#1a1814;cursor:pointer;white-space:nowrap}
@@ -162,7 +187,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 <div id="disclaimer-overlay">
   <div id="disclaimer-box">
     <h2>&#9878; Before You Continue</h2>
-    <p>The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong> — not legal advice. By using this tool you acknowledge:</p>
+    <p>The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong>, not legal advice. By using this tool you acknowledge:</p>
     <ul>
       <li>This tool does not create an attorney-client relationship</li>
       <li>Information may not apply to your specific situation</li>
@@ -361,6 +386,17 @@ function resetChat(){
 }
 
 function renderMarkdown(text){
+  // Split off source/confidence section if present
+  var sourceSection = '';
+  var hrIdx = text.indexOf('\n---\n');
+  if(hrIdx !== -1){
+    var after = text.substring(hrIdx + 5);
+    if(after.indexOf('**Source:**') !== -1 || after.indexOf('**Confidence:**') !== -1){
+      sourceSection = after;
+      text = text.substring(0, hrIdx);
+    }
+  }
+
   // Links [text](url)
   text=text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" style="color:#003262;font-weight:bold;text-decoration:underline">$1</a>');
   // Bold
@@ -378,6 +414,18 @@ function renderMarkdown(text){
     }
   }
   if(inList){out+='</ul>';}
+
+  // Render source/confidence box
+  if(sourceSection){
+    sourceSection = sourceSection.replace(/\*\*Source:\*\*/g,'<strong>Source:</strong>');
+    // Style confidence level
+    sourceSection = sourceSection.replace(/\*\*Confidence:\*\* High/g,'<strong>Confidence:</strong> <span class="conf-high">High</span>');
+    sourceSection = sourceSection.replace(/\*\*Confidence:\*\* Medium/g,'<strong>Confidence:</strong> <span class="conf-med">Medium</span>');
+    sourceSection = sourceSection.replace(/\*\*Confidence:\*\* Low/g,'<strong>Confidence:</strong> <span class="conf-low">Low</span>');
+    sourceSection = sourceSection.replace(/\n/g,'<br>');
+    out += '<div class="source-box">' + sourceSection + '</div>';
+  }
+
   return out;
 }
 
