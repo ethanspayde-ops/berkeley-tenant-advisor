@@ -183,22 +183,6 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 </head>
 <body>
 
-<!-- Legal Disclaimer Popup -->
-<div id="disclaimer-overlay">
-  <div id="disclaimer-box">
-    <h2>&#9878; Before You Continue</h2>
-    <p>The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong>, not legal advice. By using this tool you acknowledge:</p>
-    <ul>
-      <li>This tool does not create an attorney-client relationship</li>
-      <li>Information may not apply to your specific situation</li>
-      <li>For legal advice, consult a licensed tenant rights attorney</li>
-      <li>For urgent issues, contact the Berkeley Rent Board at (510) 981-7368</li>
-    </ul>
-    <button id="disclaimer-accept" onclick="acceptDisclaimer()">I Understand — Continue</button>
-    <p class="disclaimer-footer">Free legal help: East Bay Community Law Center (510) 548-4040 &nbsp;|&nbsp; Bay Area Legal Aid (415) 982-1300</p>
-  </div>
-</div>
-
 <div id="landing">
   <div id="landing-inner">
     <h1>&#127968; Berkeley Tenant Rights Advisor</h1>
@@ -494,6 +478,22 @@ async function sendMsg(){
   busy=false;btn.disabled=false;
 }
 </script>
+
+<!-- Legal Disclaimer Popup -->
+<div id="disclaimer-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="background:white;border-radius:14px;padding:28px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.4)">
+    <h2 style="font-size:17px;color:#003262;margin-bottom:12px;font-family:Arial,sans-serif">&#9878; Before You Continue</h2>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px;font-family:Arial,sans-serif">The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong>, not legal advice. By using this tool you acknowledge:</p>
+    <ul style="font-size:13px;color:#444;line-height:1.8;margin:8px 0 14px 18px;font-family:Arial,sans-serif">
+      <li>This tool does not create an attorney-client relationship</li>
+      <li>Information may not apply to your specific situation</li>
+      <li>For legal advice, consult a licensed tenant rights attorney</li>
+      <li>For urgent issues, contact the Berkeley Rent Board at (510) 981-7368</li>
+    </ul>
+    <button onclick="document.getElementById('disclaimer-overlay').style.display='none'" style="width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif">I Understand, Continue</button>
+    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px;font-family:Arial,sans-serif">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300</p>
+  </div>
+</div>
 </body>
 </html>"""
 
@@ -560,3 +560,4 @@ def chat():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
