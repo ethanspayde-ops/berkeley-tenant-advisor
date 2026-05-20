@@ -143,7 +143,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 .sb{text-align:left;padding:8px 9px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:7px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .sb:hover{background:#e8eef5;border-color:#003262;color:#003262}
 #landing{position:fixed;inset:0;background:#003262;z-index:999;display:flex;flex-direction:column;overflow:hidden}
-#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 20px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));overflow:hidden;max-width:560px;margin:0 auto;width:100%}
+#landing-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom));overflow:hidden;max-width:520px;margin:0 auto;width:100%}
 #landing h1{color:#FDB515;font-size:26px;font-weight:bold;text-align:center;line-height:1.2;margin:0}
 #landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;text-align:center;max-width:460px;line-height:1.6;margin:0}
 #landing .features{display:flex;flex-direction:column;gap:8px;width:100%;margin:0}
@@ -166,7 +166,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 
 #disclaimer-accept:hover{background:#002244}
 
-@media(min-width:581px){#landing h1{font-size:30px}#landing .subtitle{font-size:15px}#landing .feat{font-size:14px;padding:13px 16px}#landing .feat strong{font-size:14px}#landing-inner{gap:22px;justify-content:center}}
+@media(min-width:581px){#landing h1{font-size:28px}#landing .subtitle{font-size:14px}#landing .feat{font-size:13px;padding:11px 14px}#landing .feat strong{font-size:13px}#landing-inner{gap:16px;max-width:500px}}
 @media(max-height:680px){#landing-inner{gap:12px}#landing h1{font-size:20px}#landing .subtitle{font-size:12px}#landing .feat{padding:9px 12px;font-size:12px}#landing .feat strong{font-size:12px}}
 .source-box{background:#f0f4f8;border-left:3px solid #003262;border-radius:0 6px 6px 0;padding:8px 12px;margin-top:10px;font-size:12px;color:#444;line-height:1.6}
 .source-box .conf-high{color:#2e7d32;font-weight:bold}
@@ -482,22 +482,6 @@ async function sendMsg(){
   busy=false;btn.disabled=false;
 }
 </script>
-
-<!-- Legal Disclaimer Popup -->
-<div id="disclaimer-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
-  <div style="background:white;border-radius:14px;padding:28px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.4)">
-    <h2 style="font-size:17px;color:#003262;margin-bottom:12px;font-family:Arial,sans-serif">&#9878; Before You Continue</h2>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px;font-family:Arial,sans-serif">The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong>, not legal advice. By using this tool you acknowledge:</p>
-    <ul style="font-size:13px;color:#444;line-height:1.8;margin:8px 0 14px 18px;font-family:Arial,sans-serif">
-      <li>This tool does not create an attorney-client relationship</li>
-      <li>Information may not apply to your specific situation</li>
-      <li>For legal advice, consult a licensed tenant rights attorney</li>
-      <li>For urgent issues, contact the Berkeley Rent Board at (510) 981-7368</li>
-    </ul>
-    <button onclick="document.getElementById('disclaimer-overlay').style.display='none'" style="width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif">I Understand, Continue</button>
-    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px;font-family:Arial,sans-serif">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300</p>
-  </div>
-</div>
 </body>
 </html>"""
 
