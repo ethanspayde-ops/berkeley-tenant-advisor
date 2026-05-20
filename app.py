@@ -311,6 +311,8 @@ function track(type,value){
 }
 
 function startChat(){
+  var d=document.getElementById('disclaimer-overlay');
+  if(d) d.style.display='none';
   document.getElementById('landing').style.display='none';
   setTimeout(function(){
     try{
@@ -324,6 +326,8 @@ function startChat(){
 }
 
 function startWithQuestion(question,category){
+  var d=document.getElementById('disclaimer-overlay');
+  if(d) d.style.display='none';
   document.getElementById('landing').style.display='none';
   if(category) track('category',category);
   setTimeout(function(){inp.value=question;sendMsg();},150);
@@ -560,4 +564,3 @@ def chat():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
