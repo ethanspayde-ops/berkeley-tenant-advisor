@@ -77,7 +77,7 @@ Examples:
 **Source:** General landlord-tenant principles, California Civil Code Section 1941
 **Confidence:** Low - Habitability disputes are highly fact-specific. Strongly recommend consulting an attorney before taking action."""
 
-HTML = """<!DOCTYPE html>
+HTML = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -375,7 +375,7 @@ function renderMarkdown(text){
       text=text.substring(0,hrIdx);
     }
   }
-  text=text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" style="color:#003262;font-weight:bold;text-decoration:underline">$1</a>');
+  text=text.replace(/[[]([^\]]+)[\]]([(][^)]+[)])/g,'<a href="$2" target="_blank" style="color:#003262;font-weight:bold;text-decoration:underline">$1</a>');
   text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   var lines=text.split('\n');
   var out='';var inList=false;
@@ -416,14 +416,14 @@ function addMsg(role,text){
     var actions=document.createElement('div');
     actions.className='msg-actions';
     var likeBtn=document.createElement('button');
-    likeBtn.className='act-btn';likeBtn.textContent='\uD83D\uDC4D Helpful';
+    likeBtn.className='act-btn';likeBtn.textContent='\U0001F44D Helpful';
     var dislikeBtn=document.createElement('button');
-    dislikeBtn.className='act-btn';dislikeBtn.textContent='\uD83D\uDC4E Not helpful';
+    dislikeBtn.className='act-btn';dislikeBtn.textContent='\U0001F44E Not helpful';
     var shareBtn=document.createElement('button');
-    shareBtn.className='act-btn';shareBtn.textContent='\uD83D\uDD17 Copy';
-    likeBtn.onclick=function(){likeBtn.classList.add('liked');likeBtn.textContent='\uD83D\uDC4D Thanks!';dislikeBtn.disabled=true;track('feedback','helpful');showToast('Thanks for your feedback!');};
-    dislikeBtn.onclick=function(){dislikeBtn.classList.add('disliked');dislikeBtn.textContent='\uD83D\uDC4E Noted';likeBtn.disabled=true;track('feedback','not_helpful');showToast('Thanks - we will keep improving!');};
-    shareBtn.onclick=function(){navigator.clipboard.writeText(text).then(function(){shareBtn.classList.add('copied');shareBtn.textContent='\u2713 Copied!';showToast('Answer copied!');setTimeout(function(){shareBtn.classList.remove('copied');shareBtn.textContent='\uD83D\uDD17 Copy';},2000);});};
+    shareBtn.className='act-btn';shareBtn.textContent='\U0001F517 Copy';
+    likeBtn.onclick=function(){likeBtn.classList.add('liked');likeBtn.textContent='\U0001F44D Thanks!';dislikeBtn.disabled=true;track('feedback','helpful');showToast('Thanks for your feedback!');};
+    dislikeBtn.onclick=function(){dislikeBtn.classList.add('disliked');dislikeBtn.textContent='\U0001F44E Noted';likeBtn.disabled=true;track('feedback','not_helpful');showToast('Thanks - we will keep improving!');};
+    shareBtn.onclick=function(){navigator.clipboard.writeText(text).then(function(){shareBtn.classList.add('copied');shareBtn.textContent='✓ Copied!';showToast('Answer copied!');setTimeout(function(){shareBtn.classList.remove('copied');shareBtn.textContent='\U0001F517 Copy';},2000);});};
     actions.appendChild(likeBtn);actions.appendChild(dislikeBtn);actions.appendChild(shareBtn);
     wrapper.appendChild(actions);
     msgs.appendChild(wrapper);
@@ -767,7 +767,7 @@ function renderMarkdown(text){
   }
 
   // Links [text](url)
-  text=text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" style="color:#003262;font-weight:bold;text-decoration:underline">$1</a>');
+  text=text.replace(/[[]([^\]]+)[\]]([(][^)]+[)])/g,'<a href="$2" target="_blank" style="color:#003262;font-weight:bold;text-decoration:underline">$1</a>');
   // Bold
   text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   var lines=text.split('\n');
