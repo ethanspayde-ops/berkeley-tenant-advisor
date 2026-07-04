@@ -6,7 +6,7 @@ import requests as http_requests
 app = Flask(__name__)
 CORS(app)
 
-SYSTEM_PROMPT = """You are an expert advisor on Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources.
+SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) that provides general information about Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources.
 
 SCOPE:
 Only answer questions related to tenant rights, housing, renting, landlord-tenant law in Berkeley and California. If asked anything outside this scope, respond only with: "I can only help with Berkeley tenant rights and housing questions. Try asking about rent control, evictions, repairs, security deposits, or your rights as a tenant."
@@ -15,8 +15,24 @@ RESPONSE STYLE:
 - Be warm, clear, and concise.
 - Use **bold** for important terms and key rights.
 - Use bullet points for lists of rights or steps.
-- Never start every response by telling them to call the Rent Board.
+- Never start every response telling them to call the Rent Board.
 - Do not repeat disclaimers in every message.
+- Always identify yourself as an AI at the start of your first message in a conversation: "As an AI assistant (not an attorney)..."
+
+LANGUAGE DISCIPLINE - CRITICAL:
+Your responses must stay DESCRIPTIVE of what the law says, never PRESCRIPTIVE about what the user should do in their specific situation. This is the most important rule.
+
+Structure every response with TWO clearly separated sections when the question involves a specific situation:
+
+SECTION 1 - "What the ordinance requires:" (describe the law neutrally)
+- Use language like: "The RSO requires...", "Under BMC Section X, landlords must...", "California law states..."
+- This is factual description of the law. No issue here.
+
+SECTION 2 - If you include general options, frame them explicitly as:
+"General options tenants in similar situations sometimes consider - this is not guidance for your specific case:"
+- Use language like: "Some tenants in similar situations...", "One option available under the RSO is...", "The ordinance provides a remedy of..."
+- NEVER use: "you should", "you'll win", "in your case", "I recommend", "you need to"
+- AVOID directing steps at the user personally. Describe available options neutrally.
 
 CITATIONS:
 - Always cite the specific legal source. Examples: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 requires..."
@@ -25,10 +41,12 @@ CITATIONS:
 ATTORNEY REFERRAL:
 - Recommend a tenant rights attorney FIRST, then the Rent Board second.
 - For free help: East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300.
+- For any question that is case-specific or high-stakes (eviction, habitability emergency, discrimination), always end with: "For your specific situation, please consult a tenant rights attorney rather than relying on general information."
 
 ACCURACY:
 - Do not make definitive statements about arbitration clauses - refer to an attorney.
-- If uncertain, say "You may want to verify this with an attorney."
+- If uncertain, say "You may want to verify this with an attorney or the Rent Board directly."
+- Never predict outcomes for a specific person's case.
 
 HABITABILITY: Cover all issues - heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural, sanitation. Tenant remedies include written notice, repair-and-deduct (up to one month rent), rent withholding after proper steps, Rent Board complaint, and in serious cases breaking the lease.
 
@@ -142,7 +160,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?','Security Deposits')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
     <button id="start-btn" onclick="startChat()">Ask Your Own Question &#8594;</button>
-    <p class="disc-text">General legal information only, not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
+    <p class="disc-text">AI tool, not a human or attorney. General legal information only, not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
   </div>
 </div>
 
@@ -189,7 +207,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <button class="tb" onclick="ask('What organizations in Berkeley can help me with tenant issues?','Get Help')">&#128222; Get Help / Contacts</button>
       <button class="tb" onclick="ask('What free legal aid is available for Berkeley tenants?','Legal Aid')">&#9878; Legal Aid</button>
     </div>
-    <div id="notice"><strong>Legal Notice:</strong> General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation.</div>
+    <div id="notice"><strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation. Conversation topics are anonymously logged.</div>
   </div>
 
   <div id="chat">
@@ -202,7 +220,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
         <div class="av">&#127968;</div>
         <div id="welcome">
           <h3>Welcome, Berkeley Tenant!</h3>
-          <p>I can help you understand your rights under Berkeley's Rent Stabilization Ordinance. No account needed - just ask below.</p>
+          <p>I am an AI assistant, not a human or attorney. I can help you understand your rights under Berkeley's Rent Stabilization Ordinance. No account needed - just ask below.</p>
           <div id="sugs">
             <button class="sb" onclick="ask('Does rent control apply to my Berkeley apartment?','Rent Control')">&#127962; Does rent control apply to my unit?</button>
             <button class="sb" onclick="ask('My landlord wants to raise my rent. What are the limits in Berkeley?','Rent Increases')">&#128200; My landlord wants to raise my rent</button>
@@ -225,18 +243,20 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 </div>
 
 <div id="mobile-notice">
-  <strong>Legal Notice:</strong> General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation.
+  <strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation.
 </div>
 
 <div id="disc-wrap" style="position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
   <div style="background:white;border-radius:14px;padding:28px;max-width:460px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.4);font-family:Arial,sans-serif">
     <h2 style="font-size:17px;color:#003262;margin-bottom:12px;font-weight:bold">&#9878; Before You Continue</h2>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px">The Berkeley Tenant Rights Advisor provides <strong>general legal information only</strong>, not legal advice. By using this tool you acknowledge:</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px">The Berkeley Tenant Rights Advisor is an <strong>AI tool, not a human and not an attorney</strong>. It provides general legal information only, not legal advice. By continuing you acknowledge:</p>
     <ul style="font-size:13px;color:#444;line-height:1.9;margin:0 0 14px 18px">
+      <li>You are interacting with an AI assistant, not a licensed attorney or human advisor</li>
       <li>This tool does not create an attorney-client relationship</li>
       <li>Information may not apply to your specific situation</li>
       <li>For legal advice, consult a licensed tenant rights attorney</li>
       <li>For urgent issues, call the Berkeley Rent Board at (510) 981-7368</li>
+      <li>Your conversation topic and feedback are anonymously logged to improve this tool</li>
     </ul>
     <button onclick="this.closest('#disc-wrap').style.display='none'" style="width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer">I Understand, Continue</button>
     <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300</p>
@@ -435,7 +455,7 @@ def chat():
         resp = http_requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            json={"model": "llama-3.3-70b-versatile", "messages": groq_messages, "max_tokens": 1024, "temperature": 0.7},
+            json={"model": "qwen/qwen3-32b", "messages": groq_messages, "max_tokens": 1024, "temperature": 0.7, "reasoning_effort": "none"},
             timeout=30
         )
         result = resp.json()
