@@ -2,46 +2,63 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import os
 import requests as http_requests
+import time
+from collections import deque
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://berkeleytenant.com", "https://www.berkeleytenant.com"])
+
+# Simple in-memory rate limiter: max 20 requests per minute per IP
+request_log = {}
+
+def is_rate_limited(ip):
+    now = time.time()
+    if ip not in request_log:
+        request_log[ip] = deque()
+    # Remove requests older than 60 seconds
+    while request_log[ip] and request_log[ip][0] < now - 60:
+        request_log[ip].popleft()
+    if len(request_log[ip]) >= 20:
+        return True
+    request_log[ip].append(now)
+    return False
 
 SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) that provides general information about Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources.
 
-SCOPE:
-Only answer questions related to tenant rights, housing, renting, landlord-tenant law in Berkeley and California. If asked anything outside this scope, respond only with: "I can only help with Berkeley tenant rights and housing questions. Try asking about rent control, evictions, repairs, security deposits, or your rights as a tenant."
+IDENTITY: Always identify as an AI assistant, not a human or attorney. On first message say: "As an AI assistant (not an attorney)..."
+
+SCOPE: Only answer questions related to tenant rights, housing, renting, landlord-tenant law in Berkeley and California. If asked anything outside this scope, respond only with: "I can only help with Berkeley tenant rights and housing questions. Try asking about rent control, evictions, repairs, security deposits, or your rights as a tenant."
 
 RESPONSE STYLE:
-- Be warm, clear, and concise.
-- Use **bold** for important terms and key rights.
-- Use bullet points for lists of rights or steps.
-- Never start every response telling them to call the Rent Board.
-- Do not repeat disclaimers in every message.
-- Always identify yourself as an AI at the start of your first message in a conversation: "As an AI assistant (not an attorney)..."
+- Be concise. Keep total response under 300 words.
+- Use **bold** for key legal terms only.
+- Use bullet points for lists of rights or requirements.
+- Never be repetitive.
 
 LANGUAGE DISCIPLINE - CRITICAL:
-Your responses must stay DESCRIPTIVE of what the law says, never PRESCRIPTIVE about what the user should do in their specific situation. This is the most important rule.
+Stay DESCRIPTIVE of what the law says. Never PRESCRIPTIVE about what this specific user should do.
 
-Structure every response with TWO clearly separated sections when the question involves a specific situation:
+For situation-specific questions, use TWO clearly separated sections:
 
-SECTION 1 - "What the ordinance requires:" (describe the law neutrally)
-- Use language like: "The RSO requires...", "Under BMC Section X, landlords must...", "California law states..."
-- This is factual description of the law. No issue here.
+"What the ordinance requires:" (describe the law neutrally)
+- Use: "The RSO requires...", "Under BMC Section X, landlords must...", "California law states..."
 
-SECTION 2 - If you include general options, frame them explicitly as:
-"General options tenants in similar situations sometimes consider - this is not guidance for your specific case:"
-- Use language like: "Some tenants in similar situations...", "One option available under the RSO is...", "The ordinance provides a remedy of..."
+"General options available under the RSO:" (neutral framing - NOT guidance for their specific case)
+- Use: "The ordinance provides a remedy of...", "One available option under the RSO is..."
 - NEVER use: "you should", "you'll win", "in your case", "I recommend", "you need to"
-- AVOID directing steps at the user personally. Describe available options neutrally.
+- NEVER give a step-by-step action plan directed at the user personally
+
+RENT WITHHOLDING AND HIGH-STAKES QUESTIONS:
+For questions about withholding rent, lease-breaking, or eviction defense - be especially careful. Only describe that these remedies exist in law. Add: "These remedies have specific procedural requirements. For your situation, consult a tenant rights attorney before taking any action."
 
 CITATIONS:
-- Always cite the specific legal source. Examples: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 requires..."
-- When mentioning the Berkeley Rent Board always hyperlink it: [Berkeley Rent Board](https://www.cityofberkeley.info/rent)
+- Cite the specific statute when stating a legal rule: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 requires..."
+- When mentioning the Berkeley Rent Board always hyperlink: [Berkeley Rent Board](https://www.cityofberkeley.info/rent)
 
 ATTORNEY REFERRAL:
 - Recommend a tenant rights attorney FIRST, then the Rent Board second.
-- For free help: East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300.
-- For any question that is case-specific or high-stakes (eviction, habitability emergency, discrimination), always end with: "For your specific situation, please consult a tenant rights attorney rather than relying on general information."
+- Free help: East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300.
+- For case-specific or high-stakes questions always end with: "For your specific situation, please consult a tenant rights attorney rather than relying on general information."
 
 ACCURACY:
 - Do not make definitive statements about arbitration clauses - refer to an attorney.
@@ -51,11 +68,11 @@ ACCURACY:
 HABITABILITY: Cover all issues - heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural, sanitation. Tenant remedies include written notice, repair-and-deduct (up to one month rent), rent withholding after proper steps, Rent Board complaint, and in serious cases breaking the lease.
 
 CONFIDENCE AND SOURCE FORMAT:
-End every response with exactly this format:
+End EVERY response with this block and nothing else after it:
 
 ---
-**Source:** [specific statute e.g. BMC Section 13.76.130]
-**Confidence:** High/Medium/Low - [one sentence explanation]
+**Source:** [specific statute only - e.g. BMC Section 13.76.130, California Civil Code 1950.5]
+**Confidence:** High/Medium/Low - [one sentence max]
 ---"""
 
 HTML = r"""<!DOCTYPE html>
@@ -160,7 +177,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?','Security Deposits')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
     <button id="start-btn" onclick="startChat()">Ask Your Own Question &#8594;</button>
-    <p class="disc-text">AI tool, not a human or attorney. General legal information only, not legal advice. For your specific situation consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney.</p>
+    <p class="disc-text">AI tool, not a human or attorney. General legal information only. Consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney for your specific situation.</p>
   </div>
 </div>
 
@@ -246,6 +263,21 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
   <strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation.
 </div>
 
+<!-- Privacy Policy Modal -->
+<div id="privacy-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9998;overflow-y:auto;padding:20px">
+  <div style="background:white;border-radius:14px;padding:28px;max-width:560px;margin:20px auto;font-family:Arial,sans-serif">
+    <h2 style="font-size:17px;color:#003262;margin-bottom:16px;font-weight:bold">Privacy Policy</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">Last updated: July 2026</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>What we collect:</strong> We log the topic category of questions (e.g. "Rent Control") and your feedback ratings (helpful/not helpful) anonymously. We do not collect your name, email, IP address, or the full text of your questions.</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>How it is used:</strong> Logged data is used solely to understand which legal topics Berkeley tenants seek information about most, for research purposes related to legal access and technology.</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Groq (AI inference provider) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Your rights:</strong> Because we do not collect personally identifiable information, there is no personal data to access, export, or delete. If you have questions, contact: berkeleytenant.com</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:16px"><strong>California residents:</strong> Under the CCPA, you have rights regarding personal information. Because we do not collect personal information as defined by the CCPA (name, email, IP address, or other identifiers), these rights are not applicable to this tool.</p>
+    <button onclick="document.getElementById('privacy-modal').style.display='none'" style="width:100%;padding:12px;background:#003262;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer">Close</button>
+  </div>
+</div>
+
+<!-- Disclaimer Popup -->
 <div id="disc-wrap" style="position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
   <div style="background:white;border-radius:14px;padding:28px;max-width:460px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.4);font-family:Arial,sans-serif">
     <h2 style="font-size:17px;color:#003262;margin-bottom:12px;font-weight:bold">&#9878; Before You Continue</h2>
@@ -260,6 +292,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     </ul>
     <button onclick="this.closest('#disc-wrap').style.display='none'" style="width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer">I Understand, Continue</button>
     <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300</p>
+    <p style="font-size:11px;color:#aaa;text-align:center;margin-top:6px"><a href="#" onclick="document.getElementById('disc-wrap').style.display='none';document.getElementById('privacy-modal').style.display='block';return false;" style="color:#003262">Privacy Policy</a></p>
   </div>
 </div>
 
@@ -282,6 +315,23 @@ function showToast(msg){
 
 function track(type,value){
   try{fetch('/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:type,value:value,ts:new Date().toISOString()})}).catch(function(){});}catch(e){}
+}
+
+function trackCustomQuestion(text){
+  if(!text||text.length<3) return;
+  // Extract a topic keyword from the question for logging
+  var lower=text.toLowerCase();
+  var topic='Custom Question';
+  if(lower.indexOf('rent control')>-1||lower.indexOf('rso')>-1) topic='Rent Control (custom)';
+  else if(lower.indexOf('evict')>-1) topic='Eviction (custom)';
+  else if(lower.indexOf('repair')>-1||lower.indexOf('habitab')>-1||lower.indexOf('heat')>-1||lower.indexOf('pest')>-1||lower.indexOf('mold')>-1) topic='Repairs (custom)';
+  else if(lower.indexOf('deposit')>-1) topic='Security Deposits (custom)';
+  else if(lower.indexOf('rent increase')>-1||lower.indexOf('raise my rent')>-1) topic='Rent Increases (custom)';
+  else if(lower.indexOf('harassment')>-1) topic='Anti-Harassment (custom)';
+  else if(lower.indexOf('entry')>-1||lower.indexOf('enter')>-1) topic='Landlord Entry (custom)';
+  else if(lower.indexOf('just cause')>-1) topic='Just Cause (custom)';
+  else if(lower.indexOf('legal aid')>-1||lower.indexOf('attorney')>-1||lower.indexOf('lawyer')>-1) topic='Legal Aid (custom)';
+  track('category',topic);
 }
 
 function startChat(){
@@ -307,7 +357,7 @@ function resetChat(){
   var av=document.createElement('div');av.className='av';av.textContent='🏠';
   var box=document.createElement('div');box.id='welcome';
   var h3=document.createElement('h3');h3.textContent='Welcome, Berkeley Tenant!';h3.style.cssText='font-size:15px;margin-bottom:6px;color:#003262';
-  var p=document.createElement('p');p.textContent='Conversation reset. Ask me anything about your tenant rights.';p.style.cssText='font-size:13px;color:#888;margin-bottom:11px;line-height:1.5';
+  var p=document.createElement('p');p.textContent='Conversation reset. I am an AI assistant, not a human or attorney. Ask me anything about your tenant rights.';p.style.cssText='font-size:13px;color:#888;margin-bottom:11px;line-height:1.5';
   var sugs=document.createElement('div');sugs.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px';
   var items=[
     ['Does rent control apply to my Berkeley apartment?','&#127962; Does rent control apply?','Rent Control'],
@@ -339,9 +389,9 @@ function renderMarkdown(text){
   var lines=text.split('\n');var out='';var inList=false;
   for(var i=0;i<lines.length;i++){
     var line=lines[i];
-    if(line.match(/^\s*-\s+/)){
+    if(line.match(/^\s*-\s+/)||line.match(/^\s*\*\s+/)){
       if(!inList){out+='<ul style="margin:6px 0 6px 16px">';inList=true;}
-      out+='<li style="margin-bottom:3px">'+line.replace(/^\s*-\s+/,'')+'</li>';
+      out+='<li style="margin-bottom:3px">'+line.replace(/^\s*[-*]\s+/,'')+'</li>';
     }else{
       if(inList){out+='</ul>';inList=false;}
       if(line.trim()){out+='<p style="margin:4px 0">'+line+'</p>';}
@@ -354,6 +404,8 @@ function renderMarkdown(text){
     sourceSection=sourceSection.replace(/\*\*Confidence:\*\* Medium/g,'<strong>Confidence:</strong> <span style="color:#e65100;font-weight:bold">Medium</span>');
     sourceSection=sourceSection.replace(/\*\*Confidence:\*\* Low/g,'<strong>Confidence:</strong> <span style="color:#c62828;font-weight:bold">Low</span>');
     sourceSection=sourceSection.replace(/\n/g,'<br>');
+    // Clean up markdown that leaked into source box
+    sourceSection=sourceSection.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" style="color:#003262">$1</a>');
     out+='<div style="background:#f0f4f8;border-left:3px solid #003262;border-radius:0 6px 6px 0;padding:8px 12px;margin-top:10px;font-size:12px;color:#444;line-height:1.6">'+sourceSection+'</div>';
   }
   return out;
@@ -397,6 +449,11 @@ function ask(q,category){
 async function sendMsg(){
   var text=inp.value.trim();
   if(!text||busy)return;
+  // Track custom typed questions
+  var isCustom=true;
+  var presetQ=['Does rent control apply to my Berkeley apartment?','My landlord wants to raise my rent. What are the limits in Berkeley?','I received an eviction notice in Berkeley. What should I do?','Landlord not making repairs. What are my rights in Berkeley?','What is rent control in Berkeley and does it apply to my unit?','What are my rights if my landlord tries to evict me in Berkeley?','What are my rights regarding repairs and habitability in Berkeley?','What are my rights regarding security deposits in Berkeley?'];
+  for(var i=0;i<presetQ.length;i++){if(presetQ[i]===text){isCustom=false;break;}}
+  if(isCustom) trackCustomQuestion(text);
   inp.value='';inp.style.height='auto';
   busy=true;btn.disabled=true;
   addMsg('user',text);
@@ -406,9 +463,16 @@ async function sendMsg(){
     var r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})});
     var data=await r.json();
     removeTyping();
-    if(data.error){addMsg('bot','Error: '+data.error);}
+    if(data.error){
+      if(data.retry_after){
+        addMsg('bot','The AI is temporarily busy due to high demand. Please wait about '+data.retry_after+' seconds and try again.');
+      } else {
+        addMsg('bot','Something went wrong. Please try again in a moment.');
+      }
+      hist.pop();
+    }
     else{hist.push({role:'assistant',content:data.reply});addMsg('bot',data.reply);}
-  }catch(e){removeTyping();addMsg('bot','Could not reach the server. Please try again.');}
+  }catch(e){removeTyping();addMsg('bot','Could not reach the server. Please try again.');hist.pop();}
   busy=false;btn.disabled=false;
 }
 </script>
@@ -416,8 +480,31 @@ async function sendMsg(){
 </html>"""
 
 
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; "
+        "style-src 'self' 'unsafe-inline'; "
+        "connect-src 'self' https://cloudflareinsights.com; "
+        "img-src 'self' data:; "
+        "frame-ancestors 'none';"
+    )
+    return response
+
+
 @app.route("/")
 def index():
+    return Response(HTML, mimetype="text/html; charset=utf-8")
+
+
+@app.route("/privacy")
+def privacy():
     return Response(HTML, mimetype="text/html; charset=utf-8")
 
 
@@ -426,49 +513,91 @@ def track():
     sheet_url = os.environ.get("TRACKING_SHEET_URL")
     if not sheet_url:
         return jsonify({"ok": False}), 200
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+    if not data or not isinstance(data.get('type'), str) or not isinstance(data.get('value'), str):
+        return jsonify({"ok": False}), 400
+    # Sanitize inputs
+    event_type = data['type'][:50]
+    event_value = data['value'][:100]
+    event_ts = str(data.get('ts', ''))[:30]
+    if event_type not in ['category', 'feedback']:
         return jsonify({"ok": False}), 400
     try:
-        http_requests.post(sheet_url, json=data, timeout=5)
+        http_requests.post(sheet_url, json={'type': event_type, 'value': event_value, 'ts': event_ts}, timeout=5)
         return jsonify({"ok": True})
-    except Exception as e:
+    except Exception:
         return jsonify({"ok": False}), 200
 
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    # Rate limiting by IP
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if ip:
+        ip = ip.split(',')[0].strip()
+    if is_rate_limited(ip):
+        return jsonify({"error": "Too many requests. Please wait a moment.", "retry_after": 30}), 429
+
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        return jsonify({"error": "Server API key not configured."}), 500
-    data = request.get_json()
+        return jsonify({"error": "Service temporarily unavailable."}), 500
+
+    data = request.get_json(silent=True)
     if not data or "messages" not in data:
-        return jsonify({"error": "Missing messages field."}), 400
+        return jsonify({"error": "Invalid request."}), 400
+
     messages = data["messages"]
     if not isinstance(messages, list) or len(messages) == 0:
-        return jsonify({"error": "messages must be a non-empty list."}), 400
+        return jsonify({"error": "Invalid request."}), 400
+
+    # Limit conversation history to last 6 messages to reduce token usage
+    if len(messages) > 6:
+        messages = messages[-6:]
+
+    # Validate message format
     groq_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     for msg in messages:
-        role = "user" if msg["role"] == "user" else "assistant"
-        groq_messages.append({"role": role, "content": msg["content"]})
+        if not isinstance(msg, dict):
+            continue
+        role = msg.get("role", "")
+        content = msg.get("content", "")
+        if role not in ["user", "assistant"] or not isinstance(content, str):
+            continue
+        # Limit individual message length
+        content = content[:2000]
+        groq_messages.append({"role": role, "content": content})
+
     try:
         resp = http_requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            json={"model": "qwen/qwen3-32b", "messages": groq_messages, "max_tokens": 1024, "temperature": 0.7, "reasoning_effort": "none"},
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "qwen/qwen3-32b",
+                "messages": groq_messages,
+                "max_tokens": 600,
+                "temperature": 0.4,
+                "reasoning_effort": "none"
+            },
             timeout=30
         )
         result = resp.json()
         if resp.status_code == 429:
-            return jsonify({"error": "Rate limit reached. Please try again in a moment."}), 429
+            retry_after = int(resp.headers.get('retry-after', 20))
+            return jsonify({"error": "Rate limit reached.", "retry_after": retry_after}), 429
         if resp.status_code == 401:
-            return jsonify({"error": "Invalid API key."}), 401
+            return jsonify({"error": "Service temporarily unavailable."}), 500
         if resp.status_code != 200:
-            return jsonify({"error": f"API error {resp.status_code}"}), 500
-        reply = result["choices"][0]["message"]["content"]
-        return jsonify({"reply": reply.strip()})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+            return jsonify({"error": "Service temporarily unavailable."}), 500
+        reply = result["choices"][0]["message"]["content"].strip()
+        # Remove any <think>...</think> blocks Qwen3 might output
+        import re
+        reply = re.sub(r'<think>.*?</think>', '', reply, flags=re.DOTALL).strip()
+        return jsonify({"reply": reply})
+    except Exception:
+        return jsonify({"error": "Service temporarily unavailable."}), 500
 
 
 if __name__ == "__main__":
