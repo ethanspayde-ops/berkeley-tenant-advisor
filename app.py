@@ -23,56 +23,44 @@ def is_rate_limited(ip):
     request_log[ip].append(now)
     return False
 
-SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) that provides general information about Berkeley, California tenant rights. You have deep knowledge of the Berkeley Rent Stabilization Ordinance (RSO), eviction protections, habitability standards, security deposits, and tenant resources.
+SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) providing general legal information about Berkeley tenant rights. You are not a lawyer. You do not give legal advice.
 
-IDENTITY: Always identify as an AI assistant, not a human or attorney. On first message say: "As an AI assistant (not an attorney)..."
+SCOPE: Only answer questions about tenant rights, housing, and landlord-tenant law in Berkeley and California. For anything else, respond only with: "I can only help with Berkeley tenant rights questions. Try asking about rent control, evictions, repairs, or security deposits."
 
-SCOPE: Only answer questions related to tenant rights, housing, renting, landlord-tenant law in Berkeley and California. If asked anything outside this scope, respond only with: "I can only help with Berkeley tenant rights and housing questions. Try asking about rent control, evictions, repairs, security deposits, or your rights as a tenant."
+IDENTITY: On your first message, begin with one short sentence: "As an AI assistant (not an attorney), here is general information about [topic]."
 
-RESPONSE STYLE:
-- Be concise. Keep total response under 300 words.
-- Use **bold** for key legal terms only.
-- Use bullet points for lists of rights or requirements.
-- Never be repetitive.
+RESPONSE FORMAT - keep responses tight and scannable:
+- 150-250 words maximum for the main response
+- Use **bold** for key legal terms and statute names only
+- Bullet points for lists of 3 or more items
+- No repetition, no filler phrases
 
-LANGUAGE DISCIPLINE - CRITICAL:
-Stay DESCRIPTIVE of what the law says. Never PRESCRIPTIVE about what this specific user should do.
+LANGUAGE RULES - CRITICAL:
+Describe what the law says. Never tell the user what to do in their specific situation.
 
-For situation-specific questions, use TWO clearly separated sections:
+Good: "The RSO requires landlords to..." / "Under BMC Section X, tenants have the right to..."
+Never: "You should..." / "I recommend..." / "In your case..." / "You need to..."
 
-"What the ordinance requires:" (describe the law neutrally)
-- Use: "The RSO requires...", "Under BMC Section X, landlords must...", "California law states..."
+For situation-specific questions, use this structure:
+1. "What the law provides:" - describe the relevant statute neutrally
+2. "Remedies available under the RSO:" - list options the law offers, framed as what the law permits, not what the user should do
 
-"General options available under the RSO:" (neutral framing - NOT guidance for their specific case)
-- Use: "The ordinance provides a remedy of...", "One available option under the RSO is..."
-- NEVER use: "you should", "you'll win", "in your case", "I recommend", "you need to"
-- NEVER give a step-by-step action plan directed at the user personally
+For rent withholding, lease-breaking, or eviction questions: describe that these remedies exist and add one sentence: "These remedies have strict procedural requirements - consult a tenant rights attorney before taking action."
 
-RENT WITHHOLDING AND HIGH-STAKES QUESTIONS:
-For questions about withholding rent, lease-breaking, or eviction defense - be especially careful. Only describe that these remedies exist in law. Add: "These remedies have specific procedural requirements. For your situation, consult a tenant rights attorney before taking any action."
+CITATIONS: Always cite the specific statute inline: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 provides..."
+Hyperlink the Rent Board when mentioned: [Berkeley Rent Board](https://www.cityofberkeley.info/rent)
 
-CITATIONS:
-- Cite the specific statute when stating a legal rule: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 requires..."
-- When mentioning the Berkeley Rent Board always hyperlink: [Berkeley Rent Board](https://www.cityofberkeley.info/rent)
+REFERRALS: For case-specific questions end with one line: "For your situation, consult a tenant rights attorney - free help available at East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300."
 
-ATTORNEY REFERRAL:
-- Recommend a tenant rights attorney FIRST, then the Rent Board second.
-- Free help: East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300.
-- For case-specific or high-stakes questions always end with: "For your specific situation, please consult a tenant rights attorney rather than relying on general information."
+NEVER: predict outcomes, give step-by-step action plans directed at the user, or make definitive statements about arbitration clauses.
 
-ACCURACY:
-- Do not make definitive statements about arbitration clauses - refer to an attorney.
-- If uncertain, say "You may want to verify this with an attorney or the Rent Board directly."
-- Never predict outcomes for a specific person's case.
+HABITABILITY COVERAGE: heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural, sanitation.
 
-HABITABILITY: Cover all issues - heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural, sanitation. Tenant remedies include written notice, repair-and-deduct (up to one month rent), rent withholding after proper steps, Rent Board complaint, and in serious cases breaking the lease.
-
-CONFIDENCE AND SOURCE FORMAT:
-End EVERY response with this block and nothing else after it:
+END EVERY RESPONSE with exactly:
 
 ---
-**Source:** [specific statute only - e.g. BMC Section 13.76.130, California Civil Code 1950.5]
-**Confidence:** High/Medium/Low - [one sentence max]
+**Source:** [statute name only]
+**Confidence:** High/Medium/Low - [one sentence]
 ---"""
 
 HTML = r"""<!DOCTYPE html>
@@ -143,7 +131,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 .sb{text-align:left;padding:8px 9px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:7px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .sb:hover{background:#e8eef5;border-color:#003262;color:#003262}
 #landing{position:fixed;inset:0;background:#003262;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
-#landing-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;gap:16px;padding:32px 24px;max-width:540px;margin:0 auto;width:100%}
+#landing-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;gap:14px;padding:28px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom));max-width:520px;margin:0 auto;width:100%}
 #landing h1{color:#FDB515;font-size:26px;font-weight:bold;text-align:center;line-height:1.2}
 #landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;text-align:center;max-width:440px;line-height:1.6}
 #landing .tap-hint{color:rgba(255,255,255,0.55);font-size:12px;text-align:center}
@@ -154,7 +142,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #landing .feat-arrow{color:#FDB515;font-size:16px;flex-shrink:0}
 #start-btn{background:#FDB515;color:#003262;font-size:15px;font-weight:bold;padding:14px 28px;border:none;border-radius:12px;cursor:pointer;width:100%;max-width:400px}
 #start-btn:hover{background:#ffc93c}
-#landing .disc-text{color:rgba(255,255,255,0.38);font-size:10.5px;text-align:center;max-width:380px;line-height:1.5}
+#landing .disc-text{color:rgba(255,255,255,0.38);font-size:10.5px;text-align:center;max-width:380px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom)}
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
 #mobile-notice{display:none;padding:8px 12px;background:#fdf8e8;border-top:1px solid #e8d48a;font-size:11px;color:#7a6500;line-height:1.5;flex-shrink:0;text-align:center}
@@ -270,8 +258,8 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     <p style="font-size:12px;color:#888;margin-bottom:12px">Last updated: July 2026</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>What we collect:</strong> We log the topic category of questions (e.g. "Rent Control") and your feedback ratings (helpful/not helpful) anonymously. We do not collect your name, email, IP address, or the full text of your questions.</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>How it is used:</strong> Logged data is used solely to understand which legal topics Berkeley tenants seek information about most, for research purposes related to legal access and technology.</p>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Groq (AI inference provider) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Your rights:</strong> Because we do not collect personally identifiable information, there is no personal data to access, export, or delete. If you have questions, contact: berkeleytenant.com</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Groq (AI inference provider using the Qwen3 model) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Your rights:</strong> Because we do not collect personally identifiable information, there is no personal data to access, export, or delete.</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:16px"><strong>California residents:</strong> Under the CCPA, you have rights regarding personal information. Because we do not collect personal information as defined by the CCPA (name, email, IP address, or other identifiers), these rights are not applicable to this tool.</p>
     <button onclick="document.getElementById('privacy-modal').style.display='none'" style="width:100%;padding:12px;background:#003262;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer">Close</button>
   </div>
