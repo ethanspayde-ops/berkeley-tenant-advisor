@@ -258,7 +258,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     <p style="font-size:12px;color:#888;margin-bottom:12px">Last updated: July 2026</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>What we collect:</strong> We log the topic category of questions (e.g. "Rent Control") and your feedback ratings (helpful/not helpful) anonymously. We do not collect your name, email, IP address, or the full text of your questions.</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>How it is used:</strong> Logged data is used solely to understand which legal topics Berkeley tenants seek information about most, for research purposes related to legal access and technology.</p>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Groq (AI inference provider using the Qwen3 model) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Google Gemini (AI inference provider) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Your rights:</strong> Because we do not collect personally identifiable information, there is no personal data to access, export, or delete.</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:16px"><strong>California residents:</strong> Under the CCPA, you have rights regarding personal information. Because we do not collect personal information as defined by the CCPA (name, email, IP address, or other identifiers), these rights are not applicable to this tool.</p>
     <button onclick="document.getElementById('privacy-modal').style.display='none'" style="width:100%;padding:12px;background:#003262;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer">Close</button>
@@ -526,7 +526,7 @@ def chat():
     if is_rate_limited(ip):
         return jsonify({"error": "Too many requests. Please wait a moment.", "retry_after": 30}), 429
 
-    api_key = os.environ.get("GROQ_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return jsonify({"error": "Service temporarily unavailable."}), 500
 
@@ -557,17 +557,16 @@ def chat():
 
     try:
         resp = http_requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
+            "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
             },
             json={
-                "model": "qwen/qwen3-32b",
+                "model": "gemini-2.5-flash",
                 "messages": groq_messages,
                 "max_tokens": 600,
-                "temperature": 0.4,
-                "reasoning_effort": "none"
+                "temperature": 0.4
             },
             timeout=30
         )
@@ -580,9 +579,6 @@ def chat():
         if resp.status_code != 200:
             return jsonify({"error": "Service temporarily unavailable."}), 500
         reply = result["choices"][0]["message"]["content"].strip()
-        # Remove any <think>...</think> blocks Qwen3 might output
-        import re
-        reply = re.sub(r'<think>.*?</think>', '', reply, flags=re.DOTALL).strip()
         return jsonify({"reply": reply})
     except Exception:
         return jsonify({"error": "Service temporarily unavailable."}), 500
