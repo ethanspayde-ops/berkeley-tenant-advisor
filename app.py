@@ -23,7 +23,7 @@ def is_rate_limited(ip):
     request_log[ip].append(now)
     return False
 
-SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) providing general legal information about Berkeley tenant rights. You are not a lawyer. You do not give legal advice.
+SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) providing general legal information about Berkeley tenant rights. You are not a lawyer. You do not give legal advice. This tool is privately operated and is not affiliated with any government agency.
 
 SCOPE: Only answer questions about tenant rights, housing, and landlord-tenant law in Berkeley and California. For anything else, respond only with: "I can only help with Berkeley tenant rights questions. Try asking about rent control, evictions, repairs, or security deposits."
 
@@ -48,9 +48,10 @@ For situation-specific questions, use this structure:
 For rent withholding, lease-breaking, or eviction questions: describe that these remedies exist and add one sentence: "These remedies have strict procedural requirements - consult a tenant rights attorney before taking action."
 
 CITATIONS: Always cite the specific statute inline: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 provides..."
-Hyperlink the Rent Board when mentioned: [Berkeley Rent Board](https://www.cityofberkeley.info/rent)
 
-REFERRALS: For case-specific questions end with one line: "For your situation, consult a tenant rights attorney - free help available at East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300."
+GOVERNMENT AGENCY REFERRALS - ABSOLUTE RULE: Never mention, reference, hyperlink, or suggest users contact any local government housing agency. Never include any government agency phone numbers or websites. If you would normally reference a government agency, instead direct users to consult a tenant rights attorney or the legal aid organizations listed below.
+
+REFERRALS: For case-specific questions end with one line: "For your situation, consult a tenant rights attorney - free help is available through East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300."
 
 NEVER: predict outcomes, give step-by-step action plans directed at the user, or make definitive statements about arbitration clauses.
 
@@ -165,7 +166,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <div class="feat" onclick="startWithQuestion('What are my rights regarding security deposits in Berkeley?','Security Deposits')"><div class="feat-text"><strong>&#128176; Deposits</strong>Learn the rules around security deposits and how to get yours back.</div><span class="feat-arrow">&#8594;</span></div>
     </div>
     <button id="start-btn" onclick="startChat()">Ask Your Own Question &#8594;</button>
-    <p class="disc-text">AI tool, not a human or attorney. General legal information only. Consult the Berkeley Rent Board (510) 981-7368 or a tenant attorney for your specific situation.</p>
+    <p class="disc-text">AI tool, not a human or attorney. General legal information only, not legal advice. This site is privately operated and not affiliated with any government agency. Consult a tenant rights attorney for your specific situation.</p>
   </div>
 </div>
 
@@ -183,7 +184,6 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
   <button class="mobile-chip" onclick="ask('What is rent control in Berkeley and does it apply to my unit?','Rent Control')">&#128203; Rent Control</button>
   <button class="mobile-chip" onclick="ask('What are the rules around rent increases in Berkeley?','Rent Increases')">&#128200; Rent Increases</button>
   <button class="mobile-chip" onclick="ask('What are my rights if my landlord tries to evict me?','Eviction Protections')">&#128682; Eviction</button>
-  <button class="mobile-chip" onclick="ask('What is the Berkeley Rent Board and how can it help me?','Rent Board')">&#127963; Rent Board</button>
   <button class="mobile-chip" onclick="ask('What are my rights regarding repairs and habitability in Berkeley?','Repairs and Habitability')">&#128295; Repairs</button>
   <button class="mobile-chip" onclick="ask('What are the just cause for eviction rules in Berkeley?','Just Cause Eviction')">&#9878; Just Cause</button>
   <button class="mobile-chip" onclick="ask('What are my rights regarding security deposits in Berkeley?','Security Deposits')">&#128176; Deposits</button>
@@ -200,7 +200,6 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <button class="tb" onclick="ask('What is rent control in Berkeley and does it apply to my unit?','Rent Control')">&#128203; Rent Control Basics</button>
       <button class="tb" onclick="ask('What are the rules around rent increases in Berkeley?','Rent Increases')">&#128200; Rent Increases</button>
       <button class="tb" onclick="ask('What are my rights if my landlord tries to evict me?','Eviction Protections')">&#128682; Eviction Protections</button>
-      <button class="tb" onclick="ask('What is the Berkeley Rent Board and how can it help me?','Rent Board')">&#127963; Rent Board</button>
       <button class="tb" onclick="ask('What are my rights regarding repairs and habitability in Berkeley?','Repairs and Habitability')">&#128295; Repairs &amp; Habitability</button>
       <button class="tb" onclick="ask('What are the just cause for eviction rules in Berkeley?','Just Cause Eviction')">&#9878; Just Cause Eviction</button>
       <button class="tb" onclick="ask('What are my rights regarding security deposits in Berkeley?','Security Deposits')">&#128176; Security Deposits</button>
@@ -212,7 +211,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <button class="tb" onclick="ask('What organizations in Berkeley can help me with tenant issues?','Get Help')">&#128222; Get Help / Contacts</button>
       <button class="tb" onclick="ask('What free legal aid is available for Berkeley tenants?','Legal Aid')">&#9878; Legal Aid</button>
     </div>
-    <div id="notice"><strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation. Conversation topics are anonymously logged.</div>
+    <div id="notice"><strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. This site is privately operated and not affiliated with any government agency. Consult a tenant rights attorney for your specific situation. Conversation topics are anonymously logged.</div>
   </div>
 
   <div id="chat">
@@ -248,7 +247,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 </div>
 
 <div id="mobile-notice">
-  <strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Contact the Berkeley Rent Board at (510) 981-7368 or a tenant attorney for your specific situation.
+  <strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Not affiliated with any government agency. Consult a tenant rights attorney for your specific situation.
 </div>
 
 <!-- Privacy Policy Modal -->
@@ -258,7 +257,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
     <p style="font-size:12px;color:#888;margin-bottom:12px">Last updated: July 2026</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>What we collect:</strong> We log the topic category of questions (e.g. "Rent Control") and your feedback ratings (helpful/not helpful) anonymously. We do not collect your name, email, IP address, or the full text of your questions.</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>How it is used:</strong> Logged data is used solely to understand which legal topics Berkeley tenants seek information about most, for research purposes related to legal access and technology.</p>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Google Gemini (AI inference provider) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Third parties:</strong> Topic and feedback data is stored in Google Sheets. Conversation text is processed by Groq (AI inference provider) and is not stored by this tool. Site visit analytics are collected by Cloudflare Web Analytics (privacy-preserving, no cookies, no personal data).</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:10px"><strong>Your rights:</strong> Because we do not collect personally identifiable information, there is no personal data to access, export, or delete.</p>
     <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:16px"><strong>California residents:</strong> Under the CCPA, you have rights regarding personal information. Because we do not collect personal information as defined by the CCPA (name, email, IP address, or other identifiers), these rights are not applicable to this tool.</p>
     <button onclick="document.getElementById('privacy-modal').style.display='none'" style="width:100%;padding:12px;background:#003262;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer">Close</button>
@@ -269,17 +268,17 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 <div id="disc-wrap" style="position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
   <div style="background:white;border-radius:14px;padding:28px;max-width:460px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.4);font-family:Arial,sans-serif">
     <h2 style="font-size:17px;color:#003262;margin-bottom:12px;font-weight:bold">&#9878; Before You Continue</h2>
-    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px">The Berkeley Tenant Rights Advisor is an <strong>AI tool, not a human and not an attorney</strong>. It provides general legal information only, not legal advice. By continuing you acknowledge:</p>
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px">The Berkeley Tenant Rights Advisor is an <strong>AI tool, not a human and not an attorney</strong>. It is <strong>privately operated and not affiliated with any government agency</strong>. It provides general legal information only, not legal advice. By continuing you acknowledge:</p>
     <ul style="font-size:13px;color:#444;line-height:1.9;margin:0 0 14px 18px">
       <li>You are interacting with an AI assistant, not a licensed attorney or human advisor</li>
       <li>This tool does not create an attorney-client relationship</li>
       <li>Information may not apply to your specific situation</li>
       <li>For legal advice, consult a licensed tenant rights attorney</li>
-      <li>For urgent issues, call the Berkeley Rent Board at (510) 981-7368</li>
+      <li>For urgent issues, consult a tenant rights attorney or legal aid organization</li>
       <li>Your conversation topic and feedback are anonymously logged to improve this tool</li>
     </ul>
     <button onclick="this.closest('#disc-wrap').style.display='none'" style="width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer">I Understand, Continue</button>
-    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300</p>
+    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300<br>This site is privately operated and not affiliated with any government agency.</p>
     <p style="font-size:11px;color:#aaa;text-align:center;margin-top:6px"><a href="#" onclick="document.getElementById('disc-wrap').style.display='none';document.getElementById('privacy-modal').style.display='block';return false;" style="color:#003262">Privacy Policy</a></p>
   </div>
 </div>
@@ -526,7 +525,7 @@ def chat():
     if is_rate_limited(ip):
         return jsonify({"error": "Too many requests. Please wait a moment.", "retry_after": 30}), 429
 
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
         return jsonify({"error": "Service temporarily unavailable."}), 500
 
@@ -557,13 +556,13 @@ def chat():
 
     try:
         resp = http_requests.post(
-            "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+            "https://api.groq.com/openai/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
             },
             json={
-                "model": "gemini-2.5-flash",
+                "model": "openai/gpt-oss-120b",
                 "messages": groq_messages,
                 "max_tokens": 600,
                 "temperature": 0.4
