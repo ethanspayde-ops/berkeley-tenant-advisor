@@ -125,6 +125,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #sendbtn:hover{background:#002244}
 #sendbtn:disabled{background:#bbb;cursor:not-allowed}
 #hint{font-size:11px;color:#aaa;margin-top:4px;text-align:center}
+#ai-notice{font-size:11px;color:#aaa;margin-top:2px;text-align:center}
 #welcome{background:#fff;border:1px solid #d8d3c5;border-radius:11px;padding:14px}
 #welcome h3{font-size:15px;margin-bottom:6px;color:#003262}
 #welcome p{font-size:13px;color:#888;margin-bottom:11px;line-height:1.5}
@@ -242,6 +243,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
         </button>
       </div>
       <div id="hint">Press Enter to send &middot; Shift+Enter for new line</div>
+      <div id="ai-notice">AI can make mistakes. Always verify important legal information with a qualified attorney.</div>
     </div>
   </div>
 </div>
