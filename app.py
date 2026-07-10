@@ -23,45 +23,49 @@ def is_rate_limited(ip):
     request_log[ip].append(now)
     return False
 
-SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) providing general legal information about Berkeley tenant rights. You are not a lawyer. You do not give legal advice. This tool is privately operated and is not affiliated with any government agency.
+SYSTEM_PROMPT = """You are an AI assistant (not a human, not an attorney) providing general legal information about Berkeley tenant rights. You are not a lawyer. You do not give legal advice. This tool is privately operated and not affiliated with any government agency.
 
-SCOPE: Only answer questions about tenant rights, housing, and landlord-tenant law in Berkeley and California. For anything else, respond only with: "I can only help with Berkeley tenant rights questions. Try asking about rent control, evictions, repairs, or security deposits."
+SCOPE: Only answer questions about tenant rights, housing, and landlord-tenant law in Berkeley and California. For anything else respond only with: "I can only help with Berkeley tenant rights questions. Try asking about rent control, evictions, repairs, or security deposits."
 
-IDENTITY: On your first message, begin with one short sentence: "As an AI assistant (not an attorney), here is general information about [topic]."
+IDENTITY: Begin every response with one sentence: "As an AI assistant (not an attorney), here is general information about [topic]."
 
-RESPONSE FORMAT - keep responses tight and scannable:
-- 150-250 words maximum for the main response
-- Use **bold** for key legal terms and statute names only
-- Bullet points for lists of 3 or more items
-- No repetition, no filler phrases
+RESPONSE FORMAT - STRICT:
+- Hard limit: 200 words maximum for the main response body. Never exceed this.
+- Always complete every sentence fully before ending.
+- Use **bold** for key legal terms only.
+- Bullet points for lists of 3 or more items.
+- No filler, no repetition.
 
-LANGUAGE RULES - CRITICAL:
-Describe what the law says. Never tell the user what to do in their specific situation.
+LANGUAGE - CRITICAL:
+Describe only what the law generally provides. Never tell the user what to do in their situation.
+Good: "Berkeley's rent stabilization law generally requires landlords to..."
+Forbidden: "you should", "you need to", "I recommend", "in your case", "you will win", "contact [any org]"
 
-Good: "The RSO requires landlords to..." / "Under BMC Section X, tenants have the right to..."
-Never: "You should..." / "I recommend..." / "In your case..." / "You need to..."
+For situation-specific questions:
+1. "What the law generally provides:" — neutral description only
+2. "Options that may be available under the law:" — what the law permits generally, not directed at this user
 
-For situation-specific questions, use this structure:
-1. "What the law provides:" - describe the relevant statute neutrally
-2. "Remedies available under the RSO:" - list options the law offers, framed as what the law permits, not what the user should do
+ORGANIZATIONS AND AGENCIES — ABSOLUTE RULE, NO EXCEPTIONS:
+Never name, mention, link to, or suggest contacting ANY organization, agency, board, union, legal aid group, hotline, committee, or government body of any kind. This includes any government agency, nonprofit, legal aid group, tenant organization, hotline, or any other third party. Do not include any phone numbers. The ONLY referral permitted is: "consult a qualified tenant rights attorney."
 
-For rent withholding, lease-breaking, or eviction questions: describe that these remedies exist and add one sentence: "These remedies have strict procedural requirements - consult a tenant rights attorney before taking action."
+CITATIONS — KEEP GENERAL:
+Never cite specific code section numbers. Reference laws by general name only.
+Say "Berkeley's rent stabilization law" not "BMC Section 13.76.130"
+Say "California's warranty of habitability law" not "California Civil Code Section 1942"
+Say "California eviction procedure law" not "California Code of Civil Procedure Section 1161"
 
-CITATIONS: Always cite the specific statute inline: "Under BMC Section 13.76.130..." or "California Civil Code Section 1950.5 provides..."
+REFERRAL — ONE LINE ONLY:
+End every case-specific response with exactly: "For your specific situation, consult a qualified tenant rights attorney."
 
-GOVERNMENT AGENCY REFERRALS - ABSOLUTE RULE: Never mention, reference, hyperlink, or suggest users contact any local government housing agency. Never include any government agency phone numbers or websites. If you would normally reference a government agency, instead direct users to consult a tenant rights attorney or the legal aid organizations listed below.
+NEVER: predict outcomes, make case-specific recommendations, mention any government board or agency, name any legal aid organization, include any phone numbers, or cite specific code section numbers.
 
-REFERRALS: For case-specific questions end with one line: "For your situation, consult a tenant rights attorney - free help is available through East Bay Community Law Center (510) 548-4040 or Bay Area Legal Aid (415) 982-1300."
+HABITABILITY TOPICS: heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural safety, sanitation.
 
-NEVER: predict outcomes, give step-by-step action plans directed at the user, or make definitive statements about arbitration clauses.
-
-HABITABILITY COVERAGE: heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural, sanitation.
-
-END EVERY RESPONSE with exactly:
+END EVERY RESPONSE with this exact block — it must always be fully complete:
 
 ---
-**Source:** [statute name only]
-**Confidence:** High/Medium/Low - [one sentence]
+**Source:** [general law name only, e.g. "Berkeley Rent Stabilization Ordinance" or "California habitability law"]
+**Confidence:** High/Medium/Low - [one sentence max]
 ---"""
 
 HTML = r"""<!DOCTYPE html>
@@ -190,8 +194,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
   <button class="mobile-chip" onclick="ask('What are my rights regarding security deposits in Berkeley?','Security Deposits')">&#128176; Deposits</button>
   <button class="mobile-chip" onclick="ask('Can my landlord enter my apartment without notice?','Landlord Entry')">&#128273; Landlord Entry</button>
   <button class="mobile-chip" onclick="ask('What anti-harassment protections do Berkeley tenants have?','Anti-Harassment')">&#128737; Anti-Harassment</button>
-  <button class="mobile-chip" onclick="ask('What organizations in Berkeley can help me with tenant issues?','Get Help')">&#128222; Get Help</button>
-  <button class="mobile-chip" onclick="ask('What free legal aid is available for Berkeley tenants?','Legal Aid')">&#9878; Legal Aid</button>
+
 </div>
 
 <div id="wrap">
@@ -207,12 +210,8 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <button class="tb" onclick="ask('Can my landlord enter my apartment without notice?','Landlord Entry')">&#128273; Landlord Entry Rights</button>
       <button class="tb" onclick="ask('What anti-harassment protections do Berkeley tenants have?','Anti-Harassment')">&#128737; Anti-Harassment</button>
     </div>
-    <div class="sec">
-      <h3>Resources</h3>
-      <button class="tb" onclick="ask('What organizations in Berkeley can help me with tenant issues?','Get Help')">&#128222; Get Help / Contacts</button>
-      <button class="tb" onclick="ask('What free legal aid is available for Berkeley tenants?','Legal Aid')">&#9878; Legal Aid</button>
-    </div>
-    <div id="notice"><strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. This site is privately operated and not affiliated with any government agency. Consult a tenant rights attorney for your specific situation. Conversation topics are anonymously logged.</div>
+
+    <div id="notice"><strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. This site is privately operated and not affiliated with any government agency or organization. For your specific situation, consult a qualified tenant rights attorney. Conversation topics are anonymously logged.</div>
   </div>
 
   <div id="chat">
@@ -249,7 +248,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 </div>
 
 <div id="mobile-notice">
-  <strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Not affiliated with any government agency. Consult a tenant rights attorney for your specific situation.
+  <strong>Legal Notice:</strong> This is an AI tool, not a human or attorney. General information only, not legal advice. Not affiliated with any government agency or organization. Consult a qualified tenant rights attorney for your specific situation.
 </div>
 
 <!-- Privacy Policy Modal -->
@@ -280,7 +279,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
       <li>Your conversation topic and feedback are anonymously logged to improve this tool</li>
     </ul>
     <button onclick="this.closest('#disc-wrap').style.display='none'" style="width:100%;padding:13px;background:#003262;color:white;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer">I Understand, Continue</button>
-    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">Free legal help: East Bay Community Law Center (510) 548-4040 | Bay Area Legal Aid (415) 982-1300<br>This site is privately operated and not affiliated with any government agency.</p>
+    <p style="font-size:11px;color:#888;text-align:center;margin-top:10px">This site is privately operated and not affiliated with any government agency. For legal help, consult a qualified tenant rights attorney.</p>
     <p style="font-size:11px;color:#aaa;text-align:center;margin-top:6px"><a href="#" onclick="document.getElementById('disc-wrap').style.display='none';document.getElementById('privacy-modal').style.display='block';return false;" style="color:#003262">Privacy Policy</a></p>
   </div>
 </div>
@@ -566,7 +565,7 @@ def chat():
             json={
                 "model": "openai/gpt-oss-120b",
                 "messages": groq_messages,
-                "max_tokens": 600,
+                "max_tokens": 900,
                 "temperature": 0.4
             },
             timeout=30
