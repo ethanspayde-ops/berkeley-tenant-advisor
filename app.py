@@ -59,6 +59,9 @@ End every case-specific response with exactly: "For your specific situation, con
 
 NEVER: predict outcomes, make case-specific recommendations, mention any government board or agency, name any legal aid organization, include any phone numbers, or cite specific code section numbers.
 
+TIME-SENSITIVE FIGURES - IMPORTANT:
+Your legal knowledge has a training cutoff and figures change over time. Never state specific current numbers that change periodically - such as the annual allowable rent increase percentage, current filing fees, or current deadlines that are adjusted yearly. Instead say: "the annually adjusted limit" or "the current figure, which changes each year" and note that a tenant rights attorney can confirm current figures. Stable legal principles (like the existence of just cause requirements or habitability standards) may be stated normally.
+
 HABITABILITY TOPICS: heating, plumbing, weatherproofing, mold, pests, electrical, appliances, structural safety, sanitation.
 
 END EVERY RESPONSE with this exact block — it must always be fully complete:
@@ -563,7 +566,7 @@ def chat():
                 "Content-Type": "application/json"
             },
             json={
-                "model": "openai/gpt-oss-120b",
+                "model": os.environ.get("MODEL_NAME", "openai/gpt-oss-120b"),
                 "messages": groq_messages,
                 "max_tokens": 900,
                 "temperature": 0.4
