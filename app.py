@@ -43,7 +43,13 @@ Forbidden: "you should", "you need to", "I recommend", "in your case", "you will
 
 For situation-specific questions:
 1. "What the law generally provides:" — neutral description only
-2. "Options that may be available under the law:" — what the law permits generally, not directed at this user
+2. "Options that may be available under the law:" — phrase every item as what the law permits, never as an instruction to the reader. Write "The law permits placing withheld rent in an escrow account" NOT "Place the withheld rent in an escrow account". Never begin a bullet with an imperative verb such as Deliver, File, Place, Pursue, Consider, Seek, Request, Use, or Deposit.
+
+HIGH-STAKES TOPICS (rent withholding, lease-breaking, eviction defense, nonpayment):
+Immediately after the options list add: "These remedies have strict procedural requirements, and using them incorrectly can carry serious consequences."
+
+QUESTIONS SEEKING TO AVOID LEGAL OBLIGATIONS (e.g. "how do I not pay rent"):
+Begin by stating that the law generally requires tenants to pay rent, then describe only the narrow lawful circumstances in which withholding is permitted. Never frame the response as help avoiding an obligation.
 
 ORGANIZATIONS AND AGENCIES — ABSOLUTE RULE, NO EXCEPTIONS:
 Never name, mention, link to, or suggest contacting ANY organization, agency, board, union, legal aid group, hotline, committee, or government body of any kind. This includes any government agency, nonprofit, legal aid group, tenant organization, hotline, or any other third party. Do not include any phone numbers. The ONLY referral permitted is: "consult a qualified tenant rights attorney."
@@ -81,8 +87,8 @@ HTML = r"""<!DOCTYPE html>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
-body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;flex-direction:column;height:100dvh;max-height:100dvh}
-#header{background:#003262;color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:3px solid #FDB515;min-height:60px}
+body{font-family:Arial,sans-serif;-webkit-font-smoothing:antialiased;background:#f4f1ea;color:#1a1814;display:flex;flex-direction:column;height:100dvh;max-height:100dvh}
+#header{background:linear-gradient(135deg,#00274d 0%,#003262 55%,#004080 100%);color:white;padding:12px 16px;box-shadow:0 2px 10px rgba(0,20,50,0.25);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:3px solid #FDB515;min-height:60px}
 #header h1{font-size:15px;font-weight:bold;display:flex;align-items:center;gap:6px;flex:1;margin-right:10px;line-height:1.3}
 #header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 #header span.badge{font-size:11px;background:rgba(253,181,21,0.2);border:1px solid #FDB515;color:#FDB515;padding:4px 10px;border-radius:20px;white-space:nowrap}
@@ -111,7 +117,7 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 .msg.bot .av{background:#e8eef5;border:1px solid #003262}
 .msg.user .av{background:#003262;color:white;font-size:10px;font-weight:bold}
 .bub{padding:9px 13px;border-radius:13px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}
-.msg.bot .bub{background:#fff;border:1px solid #d8d3c5;border-top-left-radius:3px}
+.msg.bot .bub{background:#fff;border:1px solid #d8d3c5;border-top-left-radius:3px;box-shadow:0 1px 4px rgba(0,30,70,0.07)}
 .msg.user .bub{background:#003262;color:white;border-top-right-radius:3px}
 .msg-actions{display:flex;gap:6px;margin-top:4px;margin-left:36px;flex-wrap:wrap}
 .act-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid #d8d3c5;background:#fff;cursor:pointer;color:#666}
@@ -128,29 +134,29 @@ body{font-family:Arial,sans-serif;background:#f4f1ea;color:#1a1814;display:flex;
 #input-row:focus-within{border-color:#003262}
 #inp{flex:1;background:transparent;border:none;outline:none;font-family:Arial,sans-serif;font-size:16px;color:#1a1814;resize:none;line-height:1.5;min-height:22px;max-height:90px;-webkit-appearance:none}
 #inp::placeholder{color:#aaa}
-#sendbtn{width:34px;height:34px;background:#003262;border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+#sendbtn{width:34px;height:34px;background:linear-gradient(135deg,#003262,#004a8f);border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
 #sendbtn:hover{background:#002244}
 #sendbtn:disabled{background:#bbb;cursor:not-allowed}
 #hint{font-size:11px;color:#aaa;margin-top:4px;text-align:center}
 #ai-notice{font-size:11px;color:#aaa;margin-top:2px;text-align:center}
-#welcome{background:#fff;border:1px solid #d8d3c5;border-radius:11px;padding:14px}
+#welcome{background:#fff;border:1px solid #d8d3c5;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,30,70,0.08)}
 #welcome h3{font-size:15px;margin-bottom:6px;color:#003262}
 #welcome p{font-size:13px;color:#888;margin-bottom:11px;line-height:1.5}
 #sugs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .sb{text-align:left;padding:8px 9px;background:#f4f1ea;border:1px solid #d8d3c5;border-radius:7px;font-size:12px;color:#1a1814;cursor:pointer;line-height:1.4}
 .sb:hover{background:#e8eef5;border-color:#003262;color:#003262}
-#landing{position:fixed;inset:0;background:#003262;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
+#landing{position:fixed;inset:0;background:linear-gradient(160deg,#00274d 0%,#003262 50%,#013a70 100%);z-index:100;display:flex;flex-direction:column;overflow-y:auto}
 #landing-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;gap:14px;padding:28px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom));max-width:520px;margin:0 auto;width:100%}
 #landing h1{color:#FDB515;font-size:26px;font-weight:bold;text-align:center;line-height:1.2}
 #landing .subtitle{color:rgba(255,255,255,0.85);font-size:14px;text-align:center;max-width:440px;line-height:1.6}
 #landing .tap-hint{color:rgba(255,255,255,0.55);font-size:12px;text-align:center}
 #landing .features{display:flex;flex-direction:column;gap:10px;width:100%}
-#landing .feat{background:rgba(255,255,255,0.08);border-left:3px solid #FDB515;border-radius:8px;padding:13px 15px;color:white;font-size:13px;line-height:1.4;cursor:pointer;transition:background .15s;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
-#landing .feat:hover{background:rgba(255,255,255,0.14)}
+#landing .feat{background:rgba(255,255,255,0.08);border-left:3px solid #FDB515;border-radius:10px;padding:13px 15px;color:white;font-size:13px;line-height:1.4;cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s;box-shadow:0 2px 8px rgba(0,10,30,0.25);display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+#landing .feat:hover{background:rgba(255,255,255,0.14);transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,10,30,0.35)}
 #landing .feat-text strong{color:#FDB515;display:block;margin-bottom:3px;font-size:13px}
 #landing .feat-arrow{color:#FDB515;font-size:16px;flex-shrink:0}
-#start-btn{background:#FDB515;color:#003262;font-size:15px;font-weight:bold;padding:14px 28px;border:none;border-radius:12px;cursor:pointer;width:100%;max-width:400px}
-#start-btn:hover{background:#ffc93c}
+#start-btn{background:linear-gradient(135deg,#FDB515,#ffc93c);color:#003262;font-size:15px;font-weight:bold;padding:14px 28px;border:none;border-radius:12px;cursor:pointer;width:100%;max-width:400px;box-shadow:0 4px 14px rgba(253,181,21,0.35);transition:transform .15s,box-shadow .15s}
+#start-btn:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(253,181,21,0.45)}
 #landing .disc-text{color:rgba(255,255,255,0.38);font-size:10.5px;text-align:center;max-width:380px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom)}
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#003262;color:white;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1000;white-space:nowrap}
 #toast.show{opacity:1}
@@ -390,6 +396,7 @@ function renderMarkdown(text){
   }
   if(inList){out+='</ul>';}
   if(sourceSection){
+    sourceSection=sourceSection.replace(/\n*\s*---\s*$/,'');
     sourceSection=sourceSection.replace(/\*\*Source:\*\*/g,'<strong>Source:</strong>');
     sourceSection=sourceSection.replace(/\*\*Confidence:\*\* High/g,'<strong>Confidence:</strong> <span style="color:#2e7d32;font-weight:bold">High</span>');
     sourceSection=sourceSection.replace(/\*\*Confidence:\*\* Medium/g,'<strong>Confidence:</strong> <span style="color:#e65100;font-weight:bold">Medium</span>');
